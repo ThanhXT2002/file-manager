@@ -1,0 +1,19 @@
+<div *ngIf="_type == Type.NoDataFound"
+    class="fixed w-full h-full top-0 left-0 flex p-2 flex-col justify-center items-center bgWhite">
+    <h1 class="text-4xl font-bold">Oops</h1>
+    <p class="text-xl text-center">Không tìm thấy dữ liệu bạn yêu cầu.</p>
+</div>
+
+<div *ngIf="_type == Type.Unauthorize"
+    class="fixed w-full h-full top-0 left-0 flex p-2 flex-col justify-center items-center bgWhite">
+    <h1 class="text-4xl font-bold">Oops</h1>
+    <p class="text-xl text-center">Bạn chưa đăng nhập hoặc phiên truy cập của bạn đã hết hạn. Hãy đăng nhập lại</p>
+    <button class="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded" (click)="signIn()">Đăng nhập</button>
+</div>
+
+<div *ngIf="_type == Type.Forbidden"
+    class="fixed w-full h-full top-0 left-0 flex p-2 flex-col justify-center items-center bgWhite">
+    <h1 class="text-4xl font-bold">Oops</h1>
+    <p class="text-xl text-center">Bạn không có quyền truy cập dữ liệu này. Hãy đăng nhập lại</p>
+    <button class="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded" (click)="signIn()">Đăng nhập</button>
+</div>

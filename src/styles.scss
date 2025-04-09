@@ -1,1 +1,78 @@
-/* You can add global styles to this file, and also import other style files */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer tailwind-base, primeng, tailwind-utilities;
+@layer reset, primeng;
+
+@layer tailwind-base {
+    @tailwind base;
+}
+
+@layer tailwind-utilities {
+    @tailwind components;
+    @tailwind utilities;
+}
+
+*{
+  margin: 0;
+}
+
+html,
+body {
+  height: 100%;
+  background-color: whitesmoke;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+
+
+@layer base{
+
+
+
+ .pageFadeIn {
+   animation: waitFadeIn 0.5s ease-in;
+ }
+
+}
+
+@layer components{
+    button, a{
+        @apply cursor-pointer
+    }
+}
+
+@layer utilities {
+    .flex__middle {
+        @apply flex justify-center items-center;
+    }
+
+    .flex__start {
+        @apply flex justify-start items-center;
+    }
+
+    .flex__between {
+        @apply flex justify-between items-center;
+    }
+
+    .flex__evenly {
+        @apply flex justify-evenly items-center;
+    }
+
+    .flex__end {
+        @apply flex justify-end items-center;
+    }
+
+}
+
+@layer reset {
+
+
+}
+
+

@@ -19,10 +19,7 @@ export class BasicPage implements OnDestroy {
 
   protected breadcrumbService? = Inject(BreadcrumbService);
 
-  constructor(
-    protected globalSer: GlobalService,
-
-  ) {
+  constructor(protected globalSer: GlobalService) {
     this.openLoading();
     // this.loadUserProfile();
   }
@@ -114,7 +111,6 @@ export class BasicPage implements OnDestroy {
     return fakeObservable;
   }
 
-
   /**
    * Cập nhật breadcrumbs"
    * @param breadcrumbs Mảng breadcrumb mới
@@ -125,5 +121,13 @@ export class BasicPage implements OnDestroy {
     }
   }
 
+  toggleDarkMode() {
+    const element = document.querySelector('html');
+    if (!element) return;
+    element.classList.toggle('dark');
 
+    // Nếu muốn lưu trạng thái người dùng đã chọn
+    const isDarkMode = element.classList.contains('dark');
+    localStorage.setItem('darkMode', isDarkMode ? 'true' : 'false');
+  }
 }

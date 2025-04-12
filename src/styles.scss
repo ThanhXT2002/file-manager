@@ -1,3 +1,4 @@
+@import "primeicons/primeicons.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -21,7 +22,6 @@
 html,
 body {
   height: 100%;
-  background-color: whitesmoke;
 }
 
 body {
@@ -66,6 +66,30 @@ body {
 
     .flex__end {
         @apply flex justify-end items-center;
+    }
+
+    h1{
+      @apply text-5xl font-bold
+    }
+
+    h2 {
+      @apply text-4xl font-bold
+    }
+
+    h3 {
+      @apply text-3xl font-semibold
+    }
+
+    h4{
+      @apply text-2xl font-semibold
+    }
+
+    h5 {
+      @apply text-xl font-medium
+    }
+
+    h6 {
+      @apply text-lg
     }
 
 }

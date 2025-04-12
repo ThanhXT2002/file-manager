@@ -1,7 +1,7 @@
 <div [hidden]="!_ready" class="pageFadeIn authsOutlet flex__middle relative min-h-screen">
   <div style="width: 400px; max-width: 90%" class="top-1/2 -translate-y-2/3 absolute">
     <h1 class="text-center text-3xl p-2 mb-5 text-primary uppercase">{{ 'auth.login' | translate }}</h1>
-    <form  [formGroup]="loginForm" (ngSubmit)="loginByPassword()">
+    <form  [formGroup]="loginForm" (ngSubmit)="onLogin()">
       <div class="p-2 w-full">
         <p-floatlabel variant="in" styleClass="w-full">
           <input
@@ -14,20 +14,6 @@
           <label for="userName">{{'auth.email-or-phone' | translate}}</label>
         </p-floatlabel>
       </div>
-
-      <div class="p-2">
-      <p-floatlabel variant="in" styleClass="w-full ">
-        <p-password
-          inputStyleClass="w-full"
-          styleClass="w-full"
-          [toggleMask]="true"
-          formControlName="password"
-          feedback="false"
-          inputId="passwordInput"
-        />
-        <label for="passwordInput">{{'auth.password' | translate}}</label>
-      </p-floatlabel>
-    </div>
         <div class="p-2">
           <p-button
           type="submit"
@@ -40,7 +26,7 @@
     </form>
 
     <div class="w-full text-center">
-      <a routerLink="/auth/login-otp" class="text-sky-700 dark:text-sky-300 font-medium" >{{'auth.login-with-otp' | translate}}</a>
+      <a routerLink="/auth/login"  class="text-sky-700 dark:text-sky-300 font-medium" >{{'auth.login-with-password' | translate}}</a>
       <app-link-register-forgot-password></app-link-register-forgot-password>
     </div>
   </div>

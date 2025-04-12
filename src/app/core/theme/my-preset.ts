@@ -4,7 +4,7 @@ import { definePreset } from '@primeng/themes';
 export const  MyPreset = definePreset(Nora, {
   primitive: {
     borderRadius: {
-      none: '0',
+      none: '0px',
       xs: '2px',
       sm: '4px',
       md: '6px',
@@ -336,7 +336,7 @@ export const  MyPreset = definePreset(Nora, {
         paddingX: '0.875rem',
         paddingY: '0.625rem',
       },
-      borderRadius: '{border.radius.md}',
+      borderRadius: '{border.radius.none}',
       focusRing: {
         width: '0',
         style: 'none',
@@ -354,7 +354,7 @@ export const  MyPreset = definePreset(Nora, {
       },
       option: {
         padding: '0.5rem 0.75rem',
-        borderRadius: '{border.radius.sm}',
+        borderRadius: '{border.radius.none}',
       },
       optionGroup: {
         padding: '0.5rem 0.75rem',
@@ -362,7 +362,7 @@ export const  MyPreset = definePreset(Nora, {
       },
     },
     content: {
-      borderRadius: '{border.radius.md}',
+      borderRadius: '{border.radius.none}',
     },
     mask: {
       transitionDuration: '0.15s',
@@ -374,7 +374,7 @@ export const  MyPreset = definePreset(Nora, {
       },
       item: {
         padding: '0.5rem 0.75rem',
-        borderRadius: '{border.radius.sm}',
+        borderRadius: '{border.radius.none}',
         gap: '0.5rem',
       },
       submenuLabel: {
@@ -387,18 +387,18 @@ export const  MyPreset = definePreset(Nora, {
     },
     overlay: {
       select: {
-        borderRadius: '{border.radius.md}',
+        borderRadius: '{border.radius.none}',
         shadow:
           '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)',
       },
       popover: {
-        borderRadius: '{border.radius.md}',
+        borderRadius: '{border.radius.none}',
         padding: '0.75rem',
         shadow:
           '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)',
       },
       modal: {
-        borderRadius: '{border.radius.xl}',
+        borderRadius: '{border.radius.none}',
         padding: '1.25rem',
         shadow:
           '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',

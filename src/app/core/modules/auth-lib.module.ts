@@ -1,16 +1,27 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { PasswordModule } from 'primeng/password';
+import { InputTextModule } from 'primeng/inputtext';
+import { ButtonModule } from 'primeng/button';
+import { DividerModule } from 'primeng/divider';
+import { InputGroup } from 'primeng/inputgroup';
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
+import { InputGroupModule } from 'primeng/inputgroup';
+
+
 
 @NgModule({
   declarations: [],
-  imports: [CommonModule],
+  imports: [CommonModule, InputGroup],
   exports: [
     FloatLabelModule,
-    PasswordModule
+    PasswordModule,
+    InputTextModule,
+    ButtonModule,
+    DividerModule,
+    InputGroupAddonModule,
+    InputGroupModule
   ],
 })
 export class AuthLibModule {}

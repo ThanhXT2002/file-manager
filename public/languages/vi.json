@@ -1,0 +1,77 @@
+{
+  "app": {
+    "title": "Ứng dụng đa ngôn ngữ",
+    "welcome": "Chào mừng đến với ứng dụng của chúng tôi!",
+    "description": "Đây là một ví dụ về ứng dụng đa ngôn ngữ sử dụng Angular 19 standalone và ngx-translate.",
+    "return": "Trở về",
+    "go-back": "Quay lại"
+  },
+  "nav": {
+    "home": "Trang chủ",
+    "about": "Giới thiệu",
+    "services": "Dịch vụ",
+    "contact": "Liên hệ"
+  },
+  "language": {
+    "vi": "Tiếng Việt",
+    "en": "Tiếng Anh",
+    "zh": "Tiếng Trung"
+  },
+  "auth": {
+    "login": "Đăng nhập",
+    "register": "Đăng ký",
+    "forgot-password": "Quên mật khẩu",
+    "reset-password": "Đặt lại mật khẩu",
+    "change-password": "Đổi mật khẩu",
+    "get-password-again": "Lấy lại mật khẩu",
+    "get-otp-again": "Lấy lại mã OTP",
+    "get-otp": "Lấy mã OTP",
+    "enter-otp": "Nhập mã xác nhận",
+    "send-otp": "Gửi mã OTP",
+    "verify-email": "Xác minh email",
+    "verify-phone": "Xác minh số điện thoại",
+    "verify-otp": "Xác minh OTP",
+    "verify-identity": "Xác minh danh tính",
+    "verify-identity-success": "Xác minh danh tính thành công",
+    "verify-identity-fail": "Xác minh danh tính thất bại",
+    "verify-identity-waiting": "Đang chờ xác minh danh tính",
+    "verify-identity-approve": "Đã phê duyệt xác minh danh tính",
+    "verify-identity-reject": "Đã từ chối xác minh danh tính",
+    "verify-identity-pending": "Đang chờ xác minh danh tính",
+    "verify-identity-expired": "Xác minh danh tính đã hết hạn",
+    "verify-account": "Xác minh tài khoản",
+    "verify-account-success": "Xác minh tài khoản thành công",
+    "username": "Tên đăng nhập",
+    "email": "Email",
+    "phone": "Số điện thoại",
+    "password": "Mật khẩu",
+    "email-or-phone": "Email hoặc Số điện thoại",
+    "login-with-otp": "Đăng nhập với OTP",
+    "register-now": "Đăng ký ngay",
+    "login-with-password": "Đăng nhập bằng mật khẩu",
+    "full-name": "Họ và tên",
+    "repeat-password": "Nhập lại mật khẩu",
+    "confirm-password-not-match": "Mật khẩu xác nhận không khớp",
+    "you-already-have-an-account": "Bạn đã có tài khoản",
+    "pick-a-password": "Chọn một mật khẩu",
+    "choose-a-password": "Nhập mật khẩu của bạn",
+    "password-complexity": {
+      "too-simple": "Mật khẩu quá đơn giản",
+      "average-complexity": "Mật khẩu có độ phức tạp trung bình",
+      "good-complexity": "Mật khẩu có độ phức tạp tốt"
+    },
+    "password-requirements": {
+      "length": "Mật khẩu phải có ít nhất 8 ký tự",
+      "maxlength": "Mật khẩu không được vượt quá 16 ký tự",
+      "uppercase": "Mật khẩu phải chứa ít nhất một chữ cái viết hoa",
+      "lowercase": "Mật khẩu phải chứa ít nhất một chữ cái viết thường",
+      "number": "Mật khẩu phải chứa ít nhất một số",
+      "special-character": "Mật khẩu phải chứa ít nhất một ký tự đặc biệt",
+      "passwor-mismatch":"Mật khẩu không khớp",
+      "required":"Mật khẩu là bắt buộc"
+    },
+    "confirm-change-password":"Xác nhận thay đổi mật khẩu",
+    "confirm-change-password-success":"Thay đổi mật khẩu thành công",
+    "confirm-change-password-error":"Thay đổi mật khẩu thất bại"
+  }
+}

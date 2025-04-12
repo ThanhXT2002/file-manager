@@ -1,22 +1,20 @@
 import { Component } from '@angular/core';
-import { BasicPage } from '../../../core/shares/basic-page';
-import { GlobalService } from '../../../core/service/global.server';
-import { AuthLibModule } from '../../../core/modules/auth-lib.module';
 import { GlobalModule } from '../../../core/modules/global.module';
-import { Router } from '@angular/router';
+import { AuthLibModule } from '../../../core/modules/auth-lib.module';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { GlobalService } from '../../../core/service/global.server';
+import { Router } from '@angular/router';
+import { BasicPage } from '../../../core/shares/basic-page';
 import { environment } from '../../../../environments/environment';
-import { TranslateModule } from '@ngx-translate/core';
 import { LinkRegisterForgotPasswordComponent } from "../components/link-register-forgot-password/link-register-forgot-password.component";
 
-
 @Component({
-  selector: 'app-login-with-password',
-  imports: [GlobalModule, AuthLibModule, TranslateModule, LinkRegisterForgotPasswordComponent],
-  templateUrl: './login-with-password.component.html',
-  styleUrl: './login-with-password.component.scss',
+  selector: 'app-login-with-otp',
+  imports: [GlobalModule, AuthLibModule,  LinkRegisterForgotPasswordComponent],
+  templateUrl: './login-with-otp.component.html',
+  styleUrl: './login-with-otp.component.scss',
 })
-export class LoginWithPasswordComponent extends BasicPage {
+export class LoginWithOtpComponent extends BasicPage {
   loginForm!: FormGroup;
   constructor(
     private fb: FormBuilder,
@@ -34,7 +32,6 @@ export class LoginWithPasswordComponent extends BasicPage {
     if (!environment.production) {
       this.loginForm.patchValue({
         userName: 'tranxuanthanhtxt2002@gamil.com',
-        password: 'Thanh2002@',
       });
     }
   }
@@ -42,12 +39,11 @@ export class LoginWithPasswordComponent extends BasicPage {
   createForm() {
     this.loginForm = this.fb.group({
       userName: ['', [Validators.required]],
-      password: ['', [Validators.required]],
     });
   }
 
 
-  loginByPassword() {
+  onLogin() {
     console.log('Ok');
     // this.beginCallApi('Đang đăng nhập...');
     // this.userApi.loginPassword(this.loginData).subscribe({
@@ -135,6 +131,5 @@ export class LoginWithPasswordComponent extends BasicPage {
   }
 
 
-
-
 }
+

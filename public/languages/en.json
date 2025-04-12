@@ -1,0 +1,78 @@
+{
+  "app": {
+    "title": "Multilingual Application",
+    "welcome": "Welcome to our application!",
+    "description": "This is an example of a multilingual application using Angular 19 standalone and ngx-translate.",
+    "return": "Return",
+    "go-back": "Go back"
+  },
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "services": "Services",
+    "contact": "Contact"
+  },
+  "language": {
+    "vi": "Vietnamese",
+    "en": "English",
+    "zh": "Chinese"
+  },
+
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "forgot-password": "Forgot password",
+    "reset-password": "Reset password",
+    "change-password": "Change password",
+    "get-password-again": "Get password again",
+    "get-otp-again": "Get OTP again",
+    "get-otp": "Get OTP",
+    "enter-otp": "Enter OTP",
+    "send-otp": "Send OTP",
+    "verify-email": "Verify email",
+    "verify-phone": "Verify phone number",
+    "verify-otp": "Verify OTP",
+    "verify-identity": "Verify identity",
+    "verify-identity-success": "Identity verification successful",
+    "verify-identity-fail": "Identity verification failed",
+    "verify-identity-waiting": "Waiting for identity verification",
+    "verify-identity-approve": "Identity verification approved",
+    "verify-identity-reject": "Identity verification rejected",
+    "verify-identity-pending": "Identity verification pending",
+    "verify-identity-expired": "Identity verification expired",
+    "verify-account": "Verify account",
+    "verify-account-success": "Account verification successful",
+    "username": "Username",
+    "email": "Email",
+    "phone": "Phone number",
+    "password": "Password",
+    "email-or-phone": "Email or Phone number",
+    "login-with-otp": "Login with OTP",
+    "register-now": "Register now",
+    "login-with-password": "Login with password",
+    "full-name": "Full name",
+    "repeat-password": "Repeat password",
+    "confirm-password-not-match": "Confirm password does not match",
+    "you-already-have-an-account": "You already have an account",
+    "pick-a-password": "Pick a password",
+    "choose-a-password": "Choose a password",
+    "password-complexity": {
+      "too-simple": "Password is too simple",
+      "average-complexity": "Password has average complexity",
+      "good-complexity": "Password has good complexity"
+    },
+    "password-requirements": {
+      "length": "Password must be at least 8 characters long",
+      "maxlength": "Password must not exceed 16 characters",
+      "uppercase": "Password must contain at least one uppercase letter",
+      "lowercase": "Password must contain at least one lowercase letter",
+      "number": "Password must contain at least one number",
+      "special-character": "Password must contain at least one special character",
+      "passwor-mismatch": "Password does not match",
+      "required": "Password is required"
+    },
+    "confirm-change-password": "Confirm change password",
+    "confirm-change-password-success": "Change password successfully",
+    "confirm-change-password-error": "Change password failed"
+  }
+}

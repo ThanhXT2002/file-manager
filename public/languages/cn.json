@@ -1,0 +1,77 @@
+{
+  "app": {
+    "title": "多语言应用程序",
+    "welcome": "欢迎使用我们的应用程序！",
+    "description": "这是一个使用Angular 19 standalone和ngx-translate的多语言应用程序示例。",
+    "return": "返回",
+    "go-back": "返回"
+  },
+  "nav": {
+    "home": "主页",
+    "about": "关于我们",
+    "services": "服务",
+    "contact": "联系我们"
+  },
+  "language": {
+    "vi": "越南语",
+    "en": "英语",
+    "zh": "中文"
+  },
+  "auth": {
+    "login": "登录",
+    "register": "注册",
+    "forgot-password": "忘记密码",
+    "reset-password": "重置密码",
+    "change-password": "更改密码",
+    "get-password-again": "再次获取密码",
+    "get-otp-again": "再次获取OTP",
+    "get-otp": "获取OTP",
+    "enter-otp": "输入OTP",
+    "send-otp": "发送OTP",
+    "verify-email": "验证邮箱",
+    "verify-phone": "验证手机号",
+    "verify-otp": "验证OTP",
+    "verify-identity": "身份验证",
+    "verify-identity-success": "身份验证成功",
+    "verify-identity-fail": "身份验证失败",
+    "verify-identity-waiting": "等待身份验证",
+    "verify-identity-approve": "身份验证已批准",
+    "verify-identity-reject": "身份验证已拒绝",
+    "verify-identity-pending": "身份验证待处理",
+    "verify-identity-expired": "身份验证已过期",
+    "verify-account": "验证帐户",
+    "verify-account-success": "帐户验证成功",
+    "username": "用户名",
+    "email": "电子邮箱",
+    "phone": "手机号码",
+    "password": "密码",
+    "email-or-phone": "电子邮箱或手机号码",
+    "login-with-otp": "使用OTP登录",
+    "register-now": "立即注册",
+    "login-with-password": "使用密码登录",
+    "full-name": "全名",
+    "repeat-password": "重复密码",
+    "confirm-password-not-match": "确认密码不匹配",
+    "you-already-have-an-account": "您已经有一个帐户",
+    "pick-a-password": "选择一个密码",
+    "choose-a-password": "输入您的密码",
+    "password-complexity": {
+      "too-simple": "密码过于简单",
+      "average-complexity": "密码复杂度中等",
+      "good-complexity": "密码复杂度良好"
+    },
+    "password-requirements": {
+      "length": "密码长度必须至少为8个字符",
+      "maxlength": "密码长度不得超过16个字符",
+      "uppercase": "密码必须包含至少一个大写字母",
+      "lowercase": "密码必须包含至少一个小写字母",
+      "number": "密码必须包含至少一个数字",
+      "special-character": "密码必须包含至少一个特殊字符",
+      "passwor-mismatch": "密码不匹配",
+      "required": "密码是必需的"
+    },
+    "confirm-change-password": "确认更改密码",
+    "confirm-change-password-success": "更改密码成功",
+    "confirm-change-password-error": "更改密码失败"
+  }
+}

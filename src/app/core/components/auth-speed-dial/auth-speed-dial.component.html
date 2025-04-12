@@ -1,0 +1,22 @@
+<p-speeddial
+  [model]="items"
+  [radius]="120"
+  type="quarter-circle"
+  direction="up-right"
+  [style]="{ position: 'fixed', left: '20px', bottom: '20px' }"
+>
+  <ng-template #item let-item let-toggleCallback="toggleCallback">
+    <div
+      class="m-auto h-12 aspect-square bg-surface-300  flex items-center justify-center rounded-full shadow-2xl cursor-pointer hover:bg-surface-400 transition-all duration-200 dark:text-black"
+      (click)="toggleCallback($event, item)"
+    >
+      @if(item.icon) {
+      <i  [ngClass]="item.icon"></i>
+      } @else {
+      <span class="">
+        {{ item.label }}
+      </span>
+      }
+    </div>
+  </ng-template>
+</p-speeddial>

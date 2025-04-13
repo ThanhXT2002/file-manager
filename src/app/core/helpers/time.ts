@@ -1,3 +1,5 @@
+import { environment } from "../../../environments/environment";
+
 export var timeHelper = {
     //Chuyển text -> Date, Ex: 2023-05-08T15:56:42.7229294
     cshapeDateStringToDate(text?: any) {
@@ -8,7 +10,9 @@ export var timeHelper = {
             return date;
         }
         catch (e) {
+          if(!environment.production) {
             console.log(e);
+          }
         }
         return null;
     },
@@ -49,7 +53,7 @@ export var timeHelper = {
             return year + month + date + hour + minute + second;
         }
     },
- 
+
     leftPad: function (number: number, targetLength = 2) {
         var output = number + '';
         while (output.length < targetLength) {
@@ -195,82 +199,86 @@ export var timeHelper = {
             let date = this.numberToDate(number, utc);
             return this.dateToString(date);
         }
-        catch (e) { console.log(e); }
+        catch (e) {
+          if(!environment.production) {
+          console.log(e);
+          }
+         }
         return;
     },
 
 
     formatMinutes(milliseconds: number): string {
         if (!milliseconds || milliseconds < 0) return '0 phút';
-        
+
         // Chuyển đổi từ millisecond thành phút
         const minutes = Math.floor(milliseconds / (1000 * 60));
-        
+
         if (minutes === 0) return '0 phút';
-        
+
         // Định nghĩa các đơn vị thời gian (tính bằng phút)
         const MINUTES_PER_HOUR = 60;
         const HOURS_PER_DAY = 24;
         const DAYS_PER_WEEK = 7;
         const DAYS_PER_YEAR = 365;
-        
+
         const MINUTES_PER_DAY = MINUTES_PER_HOUR * HOURS_PER_DAY;
         const MINUTES_PER_WEEK = MINUTES_PER_DAY * DAYS_PER_WEEK;
         const MINUTES_PER_YEAR = MINUTES_PER_DAY * DAYS_PER_YEAR;
-        
+
         // Tính toán các thành phần thời gian
         let remainingMinutes = minutes;
-        
+
         // Tính số năm
         const years = Math.floor(remainingMinutes / MINUTES_PER_YEAR);
         remainingMinutes %= MINUTES_PER_YEAR;
-        
+
         const MINUTES_PER_MONTH = MINUTES_PER_DAY * 30;
         const months = Math.floor(remainingMinutes / MINUTES_PER_MONTH);
         remainingMinutes %= MINUTES_PER_MONTH;
-        
+
         // Tính số tuần
         const weeks = Math.floor(remainingMinutes / MINUTES_PER_WEEK);
         remainingMinutes %= MINUTES_PER_WEEK;
-        
+
         // Tính số ngày
         const days = Math.floor(remainingMinutes / MINUTES_PER_DAY);
         remainingMinutes %= MINUTES_PER_DAY;
-        
+
         // Tính số giờ
         const hours = Math.floor(remainingMinutes / MINUTES_PER_HOUR);
         remainingMinutes %= MINUTES_PER_HOUR;
-        
+
         // Số phút còn lại
         const mins = remainingMinutes;
-        
+
         // Tạo mảng các thành phần thời gian
         const parts = [];
-        
+
         if (years > 0) {
           parts.push(`${years} năm`);
         }
-        
+
         if (months > 0) {
           parts.push(`${months} tháng`);
         }
-        
+
         if (weeks > 0) {
           parts.push(`${weeks} tuần`);
         }
-        
+
         if (days > 0) {
           parts.push(`${days} ngày`);
         }
-        
+
         if (hours > 0) {
           parts.push(`${hours} giờ`);
         }
-        
+
         if (mins > 0) {
           parts.push(`${mins} phút`);
         }
-        
+
         // Trả về kết quả
         if (parts.length === 0) {
           return '0 phút';

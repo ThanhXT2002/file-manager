@@ -8,12 +8,13 @@ import { DividerModule } from 'primeng/divider';
 import { InputGroup } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { InputGroupModule } from 'primeng/inputgroup';
+import { InputOtp } from 'primeng/inputotp';
 
 
 
 @NgModule({
   declarations: [],
-  imports: [CommonModule, InputGroup],
+  imports: [CommonModule, InputGroup, InputOtp],
   exports: [
     FloatLabelModule,
     PasswordModule,
@@ -21,7 +22,8 @@ import { InputGroupModule } from 'primeng/inputgroup';
     ButtonModule,
     DividerModule,
     InputGroupAddonModule,
-    InputGroupModule
+    InputGroupModule,
+    InputOtp,
   ],
 })
 export class AuthLibModule {}

@@ -1,8 +1,8 @@
 import { ApplicationConfig, importProvidersFrom, provideZoneChangeDetection } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withViewTransitions } from '@angular/router';
 
 import { routes } from './app.routes';
-import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HttpClient, provideHttpClient, withFetch, withInterceptors, withInterceptorsFromDi } from '@angular/common/http';
 import { definePreset } from '@primeng/themes';
 import { providePrimeNG } from 'primeng/config';
 import Nora from '@primeng/themes/nora';
@@ -11,6 +11,9 @@ import { MyPreset } from './core/theme/my-preset';
 
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { authInterceptor } from './core/interceptors/auth.interceptor';
+import { MessageService } from 'primeng/api';
+
 
 // Factory function cho TranslateLoader
 export function HttpLoaderFactory(http: HttpClient) {
@@ -21,7 +24,7 @@ export function HttpLoaderFactory(http: HttpClient) {
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
-    provideRouter(routes),
+    provideRouter(routes, withViewTransitions()),
     provideAnimationsAsync(),
     providePrimeNG({
       theme: {
@@ -35,7 +38,7 @@ export const appConfig: ApplicationConfig = {
         },
       },
     }),
-    provideHttpClient(),
+    provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
     importProvidersFrom(
       TranslateModule.forRoot({
         loader: {
@@ -44,8 +47,10 @@ export const appConfig: ApplicationConfig = {
           deps: [HttpClient],
         },
         defaultLanguage: 'vi',
+        isolate: false,
       })
     ),
+    MessageService,
   ],
 };
 

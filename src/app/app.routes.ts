@@ -31,4 +31,15 @@ export const routes: Routes = [
       import('./pages/admin/admin.routing').then((m) => m.AdminRouting),
     providers: [importProvidersFrom(TranslateModule.forChild())],
   },
+  {
+    path: 'test',
+    loadComponent: () =>
+      import('./pages/test/test.component').then((m) => m.TestComponent),
+  },
+  {
+    path: '**',
+    loadComponent: () =>
+      import('./pages/not-found-page/not-found-page.component').then((m) => m.NotFoundPageComponent),
+      providers: [importProvidersFrom(TranslateModule.forChild())],
+  },
 ];

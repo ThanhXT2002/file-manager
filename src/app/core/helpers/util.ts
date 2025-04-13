@@ -1,3 +1,4 @@
+import { environment } from "../../../environments/environment";
 import { timeHelper } from "./time";
 
 export var utilHelper = {
@@ -51,7 +52,9 @@ export var base64Helper = {
             }));
         }
         catch (e) {
+          if (!environment.production) {
             console.log("tobase64 invalid: " + strValue);
+        }
         }
         return "";
     },
@@ -61,7 +64,11 @@ export var base64Helper = {
                 return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
             }).join(''));
         }
-        catch (e) { console.log("toString invalid: " + strBase64); }
+        catch (e) {
+          if(!environment.production) {
+           console.log("toString invalid: " + strBase64);
+           }
+          }
         return "";
     },
 

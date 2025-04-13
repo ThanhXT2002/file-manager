@@ -1,0 +1,81 @@
+<!-- Success Toast -->
+<p-toast position="bottom-center" key="success" (onClose)="onCloseToast('success')" [baseZIndex]="5000" styleClass="success-toast flex-column">
+  <ng-template let-message pTemplate="message" class="w-full">
+    <div class="w-full">
+      <div class="flex__start gap-x-5 w-full text-white">
+        <div class="flex items-center">
+          <i class="pi pi-check-circle  text-3xl"></i>
+        </div>
+        <div>
+          <span class="font-bold text-lg">{{ 'toast.success' | translate }}</span>
+          <div class="" *ngIf="message.detail">{{ message.detail }}</div>
+        </div>
+      </div>
+      <div class="flex justify-end gap-2 !mt-2" *ngIf="message.data">
+        <p-button severity="secondary" size="small" [label]="message.data.label" (click)="onActionClick('success', message.data.callback)"></p-button>
+      </div>
+    </div>
+  </ng-template>
+</p-toast>
+
+<!-- Info Toast -->
+<p-toast position="bottom-center" key="info" (onClose)="onCloseToast('info')" [baseZIndex]="5000" styleClass="info-toast flex-column">
+  <ng-template let-message pTemplate="message" class="w-full">
+    <div class="w-full">
+      <div class="flex__start gap-x-5 w-full">
+        <div class="flex items-center text-white">
+          <i class="pi pi-info-circle  text-3xl"></i>
+        </div>
+        <div>
+          <span class="font-bold  text-lg">{{ message.summary }}</span>
+          <div class="" *ngIf="message.detail">{{ message.detail }}</div>
+        </div>
+      </div>
+      <div class="flex justify-end gap-2 !mt-2" *ngIf="message.data">
+        <p-button severity="secondary" size="small" [label]="message.data.label" (click)="onActionClick('info', message.data.callback)"></p-button>
+      </div>
+    </div>
+  </ng-template>
+</p-toast>
+
+<!-- Warning Toast -->
+<p-toast position="bottom-center" key="warn" (onClose)="onCloseToast('warn')" [baseZIndex]="5000" styleClass="warning-toast flex-column">
+  <ng-template let-message pTemplate="message" class="w-full">
+    <div class="w-full">
+      <div class="flex__start gap-x-5 w-full">
+        <div class="flex items-center text-white">
+          <i class="pi pi-exclamation-triangle  text-3xl"></i>
+        </div>
+        <div>
+          <span class="font-bold text-lg">
+            {{ message.summary }}
+          </span>
+          <div class="" *ngIf="message.detail">{{ message.detail }}</div>
+        </div>
+      </div>
+      <div class="flex justify-end gap-2 !mt-2" *ngIf="message.data">
+        <p-button severity="secondary" size="small" [label]="message.data.label" (click)="onActionClick('warn', message.data.callback)"></p-button>
+      </div>
+    </div>
+  </ng-template>
+</p-toast>
+
+<!-- Error Toast -->
+<p-toast position="bottom-center" key="error" (onClose)="onCloseToast('error')" [baseZIndex]="5000" styleClass="error-toast flex-column">
+  <ng-template let-message pTemplate="message" class="w-full">
+    <div class="w-full">
+      <div class="flex__start gap-x-5 w-full">
+        <div class="flex items-center text-white">
+          <i class="pi pi-times-circle  text-3xl"></i>
+        </div>
+        <div>
+          <span class="font-bold  text-lg">{{ message.summary }}</span>
+          <div class="" *ngIf="message.detail">{{ message.detail }}</div>
+        </div>
+      </div>
+      <div class="flex justify-end gap-2 !mt-2" *ngIf="message.data">
+        <p-button severity="secondary" size="small" [label]="message.data.label" (click)="onActionClick('error', message.data.callback)"></p-button>
+      </div>
+    </div>
+  </ng-template>
+</p-toast>

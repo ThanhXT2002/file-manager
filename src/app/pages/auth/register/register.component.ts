@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthLibModule } from '../../../core/modules/auth-lib.module';
 import { GlobalModule } from '../../../core/modules/global.module';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
@@ -8,6 +8,9 @@ import { BasicPage } from '../../../core/shares/basic-page';
 import { Router } from '@angular/router';
 import { environment } from '../../../../environments/environment';
 import { PasswordValidators } from '../../../core/validators/password.validator';
+import { base64Helper } from '../../../core/helpers/util';
+import { AuthService } from '../../../core/service/auth.service';
+import { CustomToastService } from '../../../core/service/custom-toast.service';
 
 @Component({
   selector: 'app-register',
@@ -18,8 +21,12 @@ import { PasswordValidators } from '../../../core/validators/password.validator'
 export class RegisterComponent extends BasicPage {
   registerForm!: FormGroup;
   constructor(
+    private router: Router,
     private fb: FormBuilder,
-    protected override globalSer: GlobalService
+    private authService: AuthService,
+    private toastService: CustomToastService,
+    protected override globalSer: GlobalService,
+    private translateService: TranslateService
   ) {
     super(globalSer);
     this.createForm();
@@ -33,7 +40,7 @@ export class RegisterComponent extends BasicPage {
       this.registerForm.patchValue({
         fullName: 'Trần Xuân Thành',
         phone: '0123456789',
-        email: 'tranxuanthanhtxt2002@gamil.com',
+        email: 'tranthanh0898256009@gmail.com',
         password: 'Thanh2002@',
         confirmPassword: 'Thanh2002@',
       });
@@ -42,8 +49,59 @@ export class RegisterComponent extends BasicPage {
 
   onRegister() {
     if (this.registerForm.valid) {
-      // Xử lý form khi hợp lệ
-      console.log(this.registerForm.value);
+      const email = this.registerForm.get('email')?.value;
+      const encodedData = base64Helper.objectToBase64(email);
+      // Call API to register
+      this.globalSer.openLoading();
+      this.authService.register(this.registerForm.value).subscribe({
+        next: () => {
+          this.globalSer.closeLoading();
+          this.toastService.showToast('success', {
+            detail: this.translateService.instant('auth.register-success'),
+            sticky: false,
+            life: 50000,
+          });
+          // Sau khi đăng ký thành công, điều hướng đến trang xác minh OTP
+          this.router.navigate(['/auth/verify-otp-with-email'], {
+            queryParams: {
+              data: encodedData,
+            },
+          });
+        },
+        error: (error) => {
+          this.globalSer.closeLoading();
+          let errorMessage =
+            this.translateService.instant('auth.register-fail');
+          const errorCode = error.error.errorCode;
+          if (!environment.production) {
+            console.log('Error code:', errorCode);
+          }
+
+          switch (errorCode) {
+            case 'EMAIL_OR_PHONE_EXIST':
+              errorMessage = this.translateService.instant(
+                'auth.email-or-phone-exist'
+              );
+              break;
+            case 'CFPW':
+              errorMessage = this.translateService.instant(
+                'auth.confirm-password-not-match'
+              );
+              break;
+            default:
+              errorMessage = this.translateService.instant(
+                'common.unexpected-error'
+              );
+              break;
+          }
+
+          this.toastService.showToast('error', {
+            detail: errorMessage,
+            sticky: false,
+            life: 5000,
+          });
+        },
+      });
     } else {
       // Đánh dấu tất cả các trường là đã touched để hiển thị lỗi
       Object.keys(this.registerForm.controls).forEach((key) => {

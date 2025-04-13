@@ -20,17 +20,10 @@ export class AuthSpeedDialComponent implements OnInit, OnDestroy {
 
   constructor(
     private languageService: LanguageService,
-    private messageService: MessageService
   ) {}
 
   ngOnInit() {
-    // Đăng ký theo dõi thay đổi ngôn ngữ
-    this.subscription = this.languageService.currentLanguage$.subscribe(
-      (langCode) => {
-        this.currentLanguage = langCode;
-        this.configureItems();
-      }
-    );
+     this.configureItems();
 
     // Kiểm tra darkmode khi khởi động
     const savedDarkMode = localStorage.getItem('darkMode');

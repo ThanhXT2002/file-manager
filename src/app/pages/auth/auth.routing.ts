@@ -7,6 +7,7 @@ import { ForgotPasswordComponent } from "./forgot-password/forgot-password.compo
 import { VerifyAccountComponent } from "./verify-account/verify-account.component";
 import { RegisterComponent } from "./register/register.component";
 import { ResetPasswordComponent } from "./reset-password/reset-password.component";
+import { VerifyAccountByEmailComponent } from "./verify-account-by-email/verify-account-by-email.component";
 
 
 const routes: Routes = [
@@ -32,9 +33,13 @@ const routes: Routes = [
     component: VerifyAccountComponent,
   },
   {
+    path: 'verify-otp-with-email',
+    component: VerifyAccountByEmailComponent,
+  },
+  {
     path: 'register',
     component: RegisterComponent,
-  },
+  }
 ];
 @NgModule({
   declarations: [],

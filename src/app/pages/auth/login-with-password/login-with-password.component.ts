@@ -6,8 +6,10 @@ import { GlobalModule } from '../../../core/modules/global.module';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { environment } from '../../../../environments/environment';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { LinkRegisterForgotPasswordComponent } from "../components/link-register-forgot-password/link-register-forgot-password.component";
+import { AuthService } from '../../../core/service/auth.service';
+import { CustomToastService } from '../../../core/service/custom-toast.service';
 
 
 @Component({
@@ -21,7 +23,10 @@ export class LoginWithPasswordComponent extends BasicPage {
   constructor(
     private fb: FormBuilder,
     protected override globalSer: GlobalService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService,
+    private toastService: CustomToastService,
+    private translateService: TranslateService
   ) {
     super(globalSer);
     this.createForm();
@@ -33,7 +38,7 @@ export class LoginWithPasswordComponent extends BasicPage {
   ngOnInit(): void {
     if (!environment.production) {
       this.loginForm.patchValue({
-        userName: 'tranxuanthanhtxt2002@gamil.com',
+        userName: 'tranthanh0898256009@gmail.com',
         password: 'Thanh2002@',
       });
     }
@@ -48,90 +53,91 @@ export class LoginWithPasswordComponent extends BasicPage {
 
 
   loginByPassword() {
-    console.log('Ok');
-    // this.beginCallApi('Đang đăng nhập...');
-    // this.userApi.loginPassword(this.loginData).subscribe({
-    //   error: (err) => {
-    //     this.messageBoxSer.error(err);
-    //   },
-    //   next: (res) => {
-    //     switch (res.code) {
-    //       case ELoginStatus.OtpSuccess: {
-    //         this.userApi.loginCompletely(res.result ?? '');
-    //         break;
-    //       }
-    //       case ELoginStatus.EmailNotFound: {
-    //         const dialogRef = this.messageBoxSer.ok({
-    //           html: res.message,
-    //           buttons: [
-    //             MessageBoxButton.CreateOK({ html: 'Đăng ký tài khoản' }),
-    //             MessageBoxButton.CreateClose(),
-    //           ],
-    //         });
-    //         dialogRef.afterClosed().subscribe((result) => {
-    //           if (result == 'ok') {
-    //             this.openLoading();
-    //             this.router.navigate(['auths/sign-up-email'], {
-    //               queryParams: { email: this.loginData.username },
-    //             });
-    //           }
-    //         });
-    //         break;
-    //       }
-    //       case ELoginStatus.PhoneNotFound: {
-    //         const dialogRef = this.messageBoxSer.ok({
-    //           html: res.message,
-    //           buttons: [
-    //             MessageBoxButton.CreateOK({ html: 'Đăng ký tài khoản' }),
-    //             MessageBoxButton.CreateClose(),
-    //           ],
-    //         });
-    //         dialogRef.afterClosed().subscribe((result) => {
-    //           if (result == 'ok') {
-    //             this.openLoading();
-    //             this.router.navigate(['auths/sign-up-phone'], {
-    //               queryParams: { phone: this.loginData.username },
-    //             });
-    //           }
-    //         });
-    //         break;
-    //       }
-    //       case ELoginStatus.Unconfimred: {
-    //         const dialogRef = this.messageBoxSer.ok({
-    //           html: res.message,
-    //           buttons: [
-    //             MessageBoxButton.CreateOK({ html: 'Xác thực tài khoản' }),
-    //             MessageBoxButton.CreateClose(),
-    //           ],
-    //         });
-    //         dialogRef.afterClosed().subscribe((result) => {
-    //           if (result == 'ok') {
-    //             this.verifyAccount();
-    //           }
-    //         });
-    //         break;
-    //       }
-    //     }
-    //   },
-    // });
+    if (this.loginForm.valid) {
+      this.globalSer.openLoading();
+      this.authService.loginByPassword(this.loginForm.value).subscribe({
+        next: () => {
+          this.globalSer.closeLoading();
+          this.router.navigate(['/manager-file']);
+          this.toastService.showToast('success', {
+            detail: this.translateService.instant('auth.login-success'),
+            sticky: false,
+            life: 5000,
+          });
+        },
+        error: (error) => {
+          let errorMessage = this.translateService.instant('auth.login-fail');
+          const errorCode = error.error.errorCode;
+          if (!environment.production) {
+            console.log('Error code:', errorCode);
+          }
+
+          switch (errorCode) {
+            case 'ACCOUNT_NOT_EXIST':
+              errorMessage = this.translateService.instant(
+                'auth.account-not-exist'
+              );
+              break;
+            case 'ACCOUNT_LOCKED_FAILED_ATTEMPTS':
+              errorMessage = this.translateService.instant(
+                'auth.account-locked-failed-attempts'
+              );
+              break;
+            case 'INCORRECT-PASSWORD':
+              errorMessage = this.translateService.instant(
+                'auth.incorrect-password'
+              );
+              break;
+            case 'UNVERIFIED-ACCOUNT':
+              errorMessage = this.translateService.instant(
+                'auth.unverified-account'
+              );
+              break;
+            case 'ACCOUNT-NOT-ACTIVE':
+              errorMessage = this.translateService.instant(
+                'auth.account-not-active'
+              );
+              break;
+            case 'SUSPENDED-ACCOUNT':
+              errorMessage = this.translateService.instant(
+                'auth.suspended-account'
+              );
+              break;
+            case 'ACCOUNT-LOCKED':
+              errorMessage = this.translateService.instant(
+                'auth.account-locked'
+              );
+              break;
+            case 'INVALID-STATUS':
+              errorMessage =
+                this.translateService.instant('app.invalid-status');
+              break;
+            default:
+              errorMessage = this.translateService.instant(
+                'common.unexpected-error'
+              );
+              break;
+          }
+
+          this.toastService.showToast('error', {
+            detail: errorMessage,
+            sticky: false,
+            life: 5000,
+          });
+
+          if(!environment.production) {
+          console.error('Error during OTP resend:', error);
+          }
+          this.globalSer.closeLoading();
+        },
+      });
+    } else {
+      console.log('Form không hợp lệ');
+    }
   }
 
   verifyAccount() {
-    // this.beginCallApi();
-    // this.userApi.createOtp(this.loginData.username).subscribe({
-    //   error: (err) => {
-    //     this.messageBoxSer.error(err);
-    //   },
-    //   next: (res) => {
-    //     this.snackSer.success(res);
-    //   },
-    //   complete: () => {
-    //     this.openLoading();
-    //     this.router.navigate(['auths/verify-account'], {
-    //       queryParams: { username: this.loginData.username },
-    //     });
-    //   },
-    // });
+
   }
 
 

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, map, Subject, Subscription, takeUntil, tap } from 'rxjs';
 import { GlobalService } from './core/service/global.server';
@@ -7,10 +7,18 @@ import { TitleService } from './core/service/title.service';
 import { ErrorIndicatorComponent } from "./core/components/error-indicator/error-indicator.component";
 import { LoadingComponent } from "./core/components/loading/loading.component";
 import { CommonModule } from '@angular/common';
+import { GlobalToastComponent } from "./core/components/global-toast/global-toast.component";
+import { LanguageService } from './core/service/language.service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, ErrorIndicatorComponent, LoadingComponent, CommonModule],
+  imports: [
+    RouterOutlet,
+    ErrorIndicatorComponent,
+    LoadingComponent,
+    CommonModule,
+    GlobalToastComponent,
+  ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
@@ -20,26 +28,38 @@ export class AppComponent {
 
   loadIndicator: boolean = true;
   errorIndicator: boolean = false;
-
+  currentLanguage!: string;
   subscriptions: Subscription[] = [];
 
   constructor(
     private router: Router,
     public globalSer: GlobalService,
     private titleService: Title,
-    private customTitleService: TitleService
+    private customTitleService: TitleService,
+    private languageService: LanguageService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
+    // Đăng ký theo dõi thay đổi ngôn ngữ
+    this.subscriptions.push(
+      this.languageService.currentLanguage$.subscribe((langCode) => {
+        this.currentLanguage = langCode;
+
+      })
+    );
+
     this.subscriptions.push(
       this.globalSer.loadIndicator$.subscribe((value) => {
         this.loadIndicator = value;
+        this.cdr.detectChanges(); // Cập nhật giao diện khi loadIndicator thay đổi
       })
     );
 
     this.subscriptions.push(
       this.globalSer.errorIndicator$.subscribe((value) => {
         this.errorIndicator = value;
+        this.cdr.detectChanges();
       })
     );
 

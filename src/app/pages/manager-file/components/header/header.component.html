@@ -1,0 +1,15 @@
+<header class="flex__between bg-primary h-full px-2 md:px-2">
+  <section class="md:hidden">
+    <app-drawer></app-drawer>
+  </section>
+  <section class="flex__start">
+    <button class="rounded-md transition duration-300 h-9 w-9 hover:border-2 hover:bg-primary hidden md:flex__middle  md:hidden mr-2">
+      <i class="fa-solid fa-bars-progress text-white text-xl"></i>
+    </button>
+    <app-logo></app-logo>
+  </section>
+  <section class="h-full md:flex__between md:gap-x-5">
+    <app-menu-bar class="hidden md:block"></app-menu-bar>
+    <app-toggle-dark-mode></app-toggle-dark-mode>
+  </section>
+</header>

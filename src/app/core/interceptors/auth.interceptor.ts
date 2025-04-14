@@ -16,19 +16,21 @@ export const authInterceptor: HttpInterceptorFn = (
 ) => {
   const router = inject(Router);
 
-  // Đảm bảo gửi cookies với mọi request
-  const authReq = req.clone({
-    withCredentials: true,
-  });
+  // Chỉ thêm withCredentials nếu chưa được thiết lập
+  if (!req.withCredentials) {
+    req = req.clone({
+      withCredentials: true,
+    });
+  }
 
-  return next(authReq).pipe(
+  return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
-      // Xử lý lỗi 401 Unauthorized
       if (error.status === 401) {
-        // Điều hướng đến trang đăng nhập
-        router.navigate(['/auth/login']);
+        // Kiểm tra xem đã ở trang login chưa
+        if (!router.url.includes('/auth/login')) {
+          router.navigate(['/auth/login']);
+        }
       }
-
       return throwError(() => error);
     })
   );

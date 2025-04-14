@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 import PrimeUI from 'tailwindcss-primeui';
+import twScrollbar from 'tailwind-scrollbar';
 module.exports = {
   content: ["./src/**/*.{html,ts,scss}"],
   theme: {
@@ -27,5 +28,5 @@ module.exports = {
     },
   },
   darkMode: ["selector", '[class~="dark"]'],
-  plugins: [PrimeUI],
+  plugins: [PrimeUI, twScrollbar],
 };

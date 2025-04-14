@@ -14,26 +14,27 @@
     @tailwind components;
     @tailwind utilities;
 }
-
-*{
-  margin: 0;
+:root{
+  --h-header-height: 50px;
+  --h-footer-height: 50px;
 }
 
 html,
 body {
   height: 100%;
+
 }
 
 body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 
 
 @layer base{
-
-
 
  .pageFadeIn {
    animation: waitFadeIn 0.5s ease-in;
@@ -65,6 +66,10 @@ body {
         @apply flex justify-evenly items-center;
     }
 
+    .flex__around {
+      @apply flex justify-around items-center;
+    }
+
     .flex__end {
         @apply flex justify-end items-center;
     }
@@ -93,6 +98,13 @@ body {
       @apply text-lg
     }
 
+    .h-header{
+      @apply h-[var(--h-header-height)] ;
+    }
+
+    .h-footer{
+      @apply h-[var(--h-footer-height)] ;
+    }
 }
 
 @layer reset {

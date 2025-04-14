@@ -4,24 +4,16 @@ import { AuthService } from '../../core/service/auth.service';
 import { GlobalService } from '../../core/service/global.server';
 import { CustomToastService } from '../../core/service/custom-toast.service';
 import { TranslateService } from '@ngx-translate/core';
+import { HeaderComponent } from "./components/header/header.component";
+import { FooterComponent } from "./components/footer/footer.component";
 
 @Component({
   selector: 'app-manager-file',
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, HeaderComponent, FooterComponent],
   templateUrl: './manager-file.component.html',
   styleUrl: './manager-file.component.scss',
 })
 export class ManagerFileComponent {
-  toggleDarkMode() {
-    const element = document.querySelector('html');
-    if (!element) return;
-    element.classList.toggle('dark');
-
-    // Nếu muốn lưu trạng thái người dùng đã chọn
-    const isDarkMode = element.classList.contains('dark');
-    localStorage.setItem('darkMode', isDarkMode ? 'true' : 'false');
-  }
-
   user: any;
   constructor(
     private authService: AuthService,
@@ -32,6 +24,7 @@ export class ManagerFileComponent {
   ) {
     this.authService.currentUser$.subscribe((user) => {
       this.user = user;
+      console.log('user', user);
     });
   }
 
@@ -60,5 +53,15 @@ export class ManagerFileComponent {
         this.globalService.closeLoading();
       },
     });
+  }
+
+  toggleDarkMode() {
+    const element = document.querySelector('html');
+    if (!element) return;
+    element.classList.toggle('dark');
+
+    // Nếu muốn lưu trạng thái người dùng đã chọn
+    const isDarkMode = element.classList.contains('dark');
+    localStorage.setItem('darkMode', isDarkMode ? 'true' : 'false');
   }
 }

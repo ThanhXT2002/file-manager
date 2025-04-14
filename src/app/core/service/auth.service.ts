@@ -15,10 +15,9 @@ export class AuthService {
 
   constructor(
     private http: HttpClient,
-    private globalSer: GlobalService,
     private router: Router
   ) {
-    // this.checkAuthStatus();
+    this.checkAuthStatus();
   }
 
   // Đăng nhập
@@ -31,7 +30,6 @@ export class AuthService {
         tap((response) => {
           if (response && response.success) {
             this.currentUserSubject.next(response.data);
-            // this.checkAuthStatus();
           }
         }),
         catchError((error) => {

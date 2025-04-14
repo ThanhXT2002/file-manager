@@ -1,7 +1,7 @@
 import Nora from '@primeng/themes/nora';
 import { definePreset } from '@primeng/themes';
 
-export const  MyPreset = definePreset(Nora, {
+export const MyPreset = definePreset(Nora, {
   primitive: {
     borderRadius: {
       none: '0px',
@@ -550,14 +550,14 @@ export const  MyPreset = definePreset(Nora, {
           950: '#09090b',
         },
         primary: {
-          color: '{primary.400}',
+          color: '{yellow.500}',
           contrastColor: '{surface.900}',
-          hoverColor: '{primary.300}',
-          activeColor: '{primary.200}',
+          hoverColor: '{yellow.300}',
+          activeColor: '{yellow.200}',
         },
         highlight: {
-          background: 'color-mix(in srgb, {primary.400}, transparent 84%)',
-          focusBackground: 'color-mix(in srgb, {primary.400}, transparent 76%)',
+          background: 'color-mix(in srgb, {yellow.400}, transparent 84%)',
+          focusBackground: 'color-mix(in srgb, {yellow.400}, transparent 76%)',
           color: 'rgba(255,255,255,.87)',
           focusColor: 'rgba(255,255,255,.87)',
         },
@@ -573,14 +573,14 @@ export const  MyPreset = definePreset(Nora, {
           filledFocusBackground: '{surface.800}',
           borderColor: '{surface.600}',
           hoverBorderColor: '{surface.500}',
-          focusBorderColor: '{primary.color}',
+          focusBorderColor: '{yellow.color}',
           invalidBorderColor: '{red.300}',
           color: '{surface.0}',
           disabledColor: '{surface.400}',
           placeholderColor: '{surface.400}',
           invalidPlaceholderColor: '{red.400}',
           floatLabelColor: '{surface.400}',
-          floatLabelFocusColor: '{primary.color}',
+          floatLabelFocusColor: '{yellow.color}',
           floatLabelActiveColor: '{surface.400}',
           floatLabelInvalidColor: '{form.field.invalid.placeholder.color}',
           iconColor: '{surface.400}',

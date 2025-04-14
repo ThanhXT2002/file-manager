@@ -1,0 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Galada&display=swap');
+
+.galada-regular {
+  font-family: "Galada", cursive;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.text-logo{
+  font-family: 'Galada', cursive;
+  @apply text-3xl mt-1 text-violet-800 italic;
+}

@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, Inject, Renderer2 } from '@angular/core';
-import { GlobalService } from '../../core/service/global.server';
+import { GlobalService } from '../../core/service/global.service';
 import { DOCUMENT } from '@angular/common';
 
 @Component({

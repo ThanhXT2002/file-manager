@@ -21,7 +21,9 @@ export class CustomToastService {
   ) {}
 
   showToast(type: ToastType, config: ToastConfig): void {
-    if (!this.visible[type]) {
+
+      // Xóa toast cũ trước
+      this.clearToast(type);
       // Nếu đã có summary, sử dụng ngay
       if (config.summary) {
         this.addToastMessage(type, config);
@@ -36,7 +38,7 @@ export class CustomToastService {
         };
         this.addToastMessage(type, updatedConfig);
       });
-    }
+
   }
 
   private addToastMessage(type: ToastType, config: ToastConfig): void {

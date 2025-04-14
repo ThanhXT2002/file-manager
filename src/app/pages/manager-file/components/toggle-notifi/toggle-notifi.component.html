@@ -1,0 +1,16 @@
+<div class="h-full md:flex__middle  ">
+  <button class="btn__menu__bar" (click)="toggleNotifi()">
+        <i class="fa-solid fa-bell custom-badge" pBadge [value]="notifi" severity="danger" badgeSize="small"></i>
+      </button>
+</div>
+<p-drawer
+[(visible)]="isShowNotifi"
+header="Notification"
+position="right"
+styleClass="w-[30rem]">
+    <p>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
+        et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+        aliquip ex ea commodo consequat.
+    </p>
+</p-drawer>

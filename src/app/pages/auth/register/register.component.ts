@@ -3,7 +3,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthLibModule } from '../../../core/modules/auth-lib.module';
 import { GlobalModule } from '../../../core/modules/global.module';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { GlobalService } from '../../../core/service/global.server';
+import { GlobalService } from '../../../core/service/global.service';
 import { BasicPage } from '../../../core/shares/basic-page';
 import { Router } from '@angular/router';
 import { environment } from '../../../../environments/environment';

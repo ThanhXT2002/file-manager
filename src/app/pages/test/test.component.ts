@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { CustomToastService } from '../../core/service/custom-toast.service';
 import { BasicPage } from '../../core/shares/basic-page';
-import { GlobalService } from '../../core/service/global.server';
+import { GlobalService } from '../../core/service/global.service';
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({

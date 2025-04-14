@@ -3,7 +3,7 @@ import { BasicPage } from '../../../core/shares/basic-page';
 import { GlobalModule } from '../../../core/modules/global.module';
 import { AuthLibModule } from '../../../core/modules/auth-lib.module';
 import { Location } from '@angular/common';
-import { GlobalService } from '../../../core/service/global.server';
+import { GlobalService } from '../../../core/service/global.service';
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PasswordValidators } from '../../../core/validators/password.validator';

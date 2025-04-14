@@ -4,7 +4,7 @@ import { Observable, Subscription, delay, of } from "rxjs";
 import { HttpErrorResponse } from "@angular/common/http";
 
 
-import { GlobalService } from "../service/global.server";
+import { GlobalService } from "../service/global.service";
 import { Breadcrumb, BreadcrumbService } from "../service/breadcrumb.service";
 import { EErrorIndicatorType } from "../components/error-indicator/error-indicator.component";
 import { TranslateService } from "@ngx-translate/core";

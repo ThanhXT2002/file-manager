@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { BasicPage } from '../../../core/shares/basic-page';
-import { GlobalService } from '../../../core/service/global.server';
+import { GlobalService } from '../../../core/service/global.service';
 import { AuthLibModule } from '../../../core/modules/auth-lib.module';
 import { GlobalModule } from '../../../core/modules/global.module';
 import { Router } from '@angular/router';
@@ -38,7 +38,7 @@ export class LoginWithPasswordComponent extends BasicPage {
   ngOnInit(): void {
     if (!environment.production) {
       this.loginForm.patchValue({
-        userName: 'tranthanh0898256009@gmail.com',
+        userName: 'tranxuanthanhtxt2002@gmail.com',
         password: 'Thanh2002@',
       });
     }
@@ -126,7 +126,7 @@ export class LoginWithPasswordComponent extends BasicPage {
           });
 
           if(!environment.production) {
-          console.error('Error during OTP resend:', error);
+          console.error('Error:', error);
           }
           this.globalSer.closeLoading();
         },

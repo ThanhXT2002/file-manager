@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { GlobalModule } from '../../../core/modules/global.module';
 import { AuthLibModule } from '../../../core/modules/auth-lib.module';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { GlobalService } from '../../../core/service/global.server';
+import { GlobalService } from '../../../core/service/global.service';
 import { Router } from '@angular/router';
 import { BasicPage } from '../../../core/shares/basic-page';
 import { environment } from '../../../../environments/environment';

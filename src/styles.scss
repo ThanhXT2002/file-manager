@@ -35,16 +35,22 @@ body {
 
 
 @layer base{
-
  .pageFadeIn {
    animation: waitFadeIn 0.5s ease-in;
  }
-
 }
 
 @layer components{
     button, a{
         @apply cursor-pointer
+    }
+
+    .btn__menu__bar{
+        @apply text-white dark:text-black rounded-md transition duration-300 h-9 w-9 hover:border-2 hover:bg-primary flex__middle text-xl
+    }
+
+    .menu__bar .active__menu__bar{
+      @apply text-violet-800 animate-zoom3d
     }
 
 }
@@ -104,6 +110,10 @@ body {
 
     .h-footer{
       @apply h-[var(--h-footer-height)] ;
+    }
+
+    .text__wd{
+      @apply text-white dark:text-black
     }
 }
 

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
-import { GlobalService } from '../../service/global.server';
+import { GlobalService } from '../../service/global.service';
 
 export enum EErrorIndicatorType {
   NoDataFound,

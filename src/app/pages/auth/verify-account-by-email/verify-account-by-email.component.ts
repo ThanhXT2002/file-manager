@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthLibModule } from '../../../core/modules/auth-lib.module';
 import { GlobalModule } from '../../../core/modules/global.module';
 import { ActivatedRoute, Router } from '@angular/router';
-import { GlobalService } from '../../../core/service/global.server';
+import { GlobalService } from '../../../core/service/global.service';
 import { BasicPage } from '../../../core/shares/basic-page';
 import { base64Helper } from '../../../core/helpers/util';
 import { AuthService } from '../../../core/service/auth.service';

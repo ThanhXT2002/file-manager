@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { GlobalService } from '../../service/global.server';
+import { GlobalService } from '../../service/global.service';
 
 @Component({
   selector: 'app-loading',
@@ -8,5 +8,5 @@ import { GlobalService } from '../../service/global.server';
   styleUrl: './loading.component.scss',
 })
 export class LoadingComponent {
-  
+
 }

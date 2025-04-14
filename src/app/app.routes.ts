@@ -4,12 +4,15 @@ import { ManagerFileComponent } from './pages/manager-file/manager-file.componen
 import { AdminComponent } from './pages/admin/admin.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { importProvidersFrom } from '@angular/core';
+import { authGuard } from './core/guards/auth.guard';
+import { nonAuthGuard } from './core/guards/non-auth.guard';
 
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'auth', pathMatch: 'full' },
+  { path: '', redirectTo: 'manager-file', pathMatch: 'full' },
   {
     path: 'auth',
+    canActivate: [nonAuthGuard],
     component: AuthComponent,
     loadChildren: () =>
       import('./pages/auth/auth.routing').then((m) => m.AuthRouting),
@@ -17,6 +20,7 @@ export const routes: Routes = [
   },
   {
     path: 'manager-file',
+    canActivate: [authGuard],
     component: ManagerFileComponent,
     loadChildren: () =>
       import('./pages/manager-file/manager-file.routing').then(
@@ -39,7 +43,9 @@ export const routes: Routes = [
   {
     path: '**',
     loadComponent: () =>
-      import('./pages/not-found-page/not-found-page.component').then((m) => m.NotFoundPageComponent),
-      providers: [importProvidersFrom(TranslateModule.forChild())],
+      import('./pages/not-found-page/not-found-page.component').then(
+        (m) => m.NotFoundPageComponent
+      ),
+    providers: [importProvidersFrom(TranslateModule.forChild())],
   },
 ];

@@ -1,49 +1,60 @@
 @if (user) {
 <div class="h-full relative">
-  <div class="flex__middle">
+  <div class="flex__middle group md:py-4">
     <p-avatar
       image="{{ user.avatar }}"
       class="hover:border-2 h-7 w-7 cursor-pointer"
       shape="circle"
     />
-  </div>
-  <div
-    class="absolute top-0 right-0 mt-10 mr-2 shadow-lg z-10 bg-white dark:bg-gray-800 border-2 border-primary"
-  >
-    <div class="w-full p-3">
-      <div class="flex__start gap-x-3">
-        <p-avatar
-          image="{{ user.avatar }}"
-          class="hover:border-2 h-10 w-10 cursor-pointer"
-          shape="circle"
-        />
-        <div class="text-sm">
-          <p class="font-semibold">{{ user.fullName }}</p>
-          <p class="text-xs">
-            @if(user.role == 1){ Admin }@else { Người dùng }
-          </p>
+    <div
+    [ngClass]="!isThumbtack?'hidden group-hover:block':''"
+    >
+      <div
+      class="absolute top-0 right-0  mt-14 shadow-lg z-10 bg-white dark:bg-gray-800 border-2 border-primary"
+    >
+      <div class="w-full p-3">
+        <button class="p-2 absolute top-0 right-0" (click)="toggleThumbtack()">
+          <i
+          class="fa-solid "
+          [ngClass]="isThumbtack ? 'fa-thumbtack rotate-90': 'fa-thumbtack-slash'"
+          ></i>
+        </button>
+        <div class="flex__start gap-x-3">
+          <p-avatar
+            routerLink="/manager-file/profile"
+            image="{{ user.avatar }}"
+            class="hover:border-2 h-10 w-10 cursor-pointer"
+            shape="circle"
+          />
+          <div class="text-sm">
+            <p class="font-semibold">{{ user.fullName }}</p>
+            <p class="text-xs">
+              @if(user.role == 1){ Admin }@else { Người dùng }
+            </p>
+          </div>
+        </div>
+        <div class="text-sm text-right mt-2" *ngIf="user.phone">
+          <p>{{ user.phone }}</p>
+          <p>{{ user.email }}</p>
+          <p>{{ user.address }}</p>
         </div>
       </div>
-      <div class="text-sm text-right mt-2" *ngIf="user.phone">
-        <p>{{ user.phone }}</p>
-        <p>{{ user.email }}</p>
-        <p>{{ user.address }}</p>
-      </div>
+      <ul>
+        @for(item of menus; track $index) {
+        <li class="hover:bg-primary  ">
+          <a
+            (click)="item.click()"
+            class="flex__start gap-x-3 p-2 text-sm hover:text-black"
+          >
+            <span [innerHTML]="item.iconFont"></span>
+            <span>{{ item.title }}</span>
+          </a>
+        </li>
+        }
+      </ul>
     </div>
-    <ul>
-      @for(item of menus; track $index) {
-      <li class="hover:bg-primary group">
-        <a
-          (click)="item.click()"
-          class="flex__start gap-x-3 p-2 text-sm group-hover:text-black"
-        >
-          <span [innerHTML]="item.iconFont"></span>
-          <span >{{ item.title }}</span>
-        </a>
-      </li>
+    </div>
 
-      }
-    </ul>
   </div>
 </div>
 

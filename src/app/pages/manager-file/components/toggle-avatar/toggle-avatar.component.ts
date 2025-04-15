@@ -4,7 +4,7 @@ import { AuthService } from '../../../../core/service/auth.service';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { GlobalService } from '../../../../core/service/global.service';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { User } from '../../../../core/interfaces/user.interface';
 import { TranslateService } from '@ngx-translate/core';
@@ -28,7 +28,7 @@ class ItemMenu {
 
 @Component({
   selector: 'app-toggle-avatar',
-  imports: [AvatarModule, CommonModule, ButtonModule],
+  imports: [AvatarModule, CommonModule, ButtonModule, RouterModule],
   templateUrl: './toggle-avatar.component.html',
   styleUrl: './toggle-avatar.component.scss',
 })
@@ -36,6 +36,7 @@ export class ToggleAvatarComponent implements OnInit {
   menus: Array<ItemMenu> = [];
   private subscription!: Subscription;
   user: User | null = null;
+  isThumbtack: boolean = false;
 
   constructor(
     protected authService: AuthService,
@@ -114,5 +115,9 @@ export class ToggleAvatarComponent implements OnInit {
         });
       },
     });
+  }
+
+  toggleThumbtack() {
+    this.isThumbtack = !this.isThumbtack;
   }
 }

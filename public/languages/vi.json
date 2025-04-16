@@ -38,6 +38,7 @@
     "zh": "Tiếng Trung"
   },
   "auth": {
+    "Invalid-status": "Đã có lỗi xảy ra. Vui lòng thử lại sau.",
     "login": "Đăng nhập",
     "login-success": "Đăng nhập thành công",
     "login-fail": "Đăng nhập thất bại",
@@ -50,10 +51,12 @@
     "get-otp": "Lấy mã OTP",
     "enter-otp": "Nhập mã xác nhận",
     "send-otp": "Gửi mã OTP",
-    "send-otp-again": "Gửi lại mã OTP",
+    "send-otp-again": "Gửi lại mã",
     "send-otp-success": "Gửi mã OTP thành công",
     "send-otp-fail": "Gửi mã OTP thất bại",
     "send-otp-waiting": "Đang chờ gửi mã OTP",
+    "not-send-email": "Không thể gửi email OTP. Vui lòng thử lại sau.",
+    "verify-now": "Xác minh ngay",
     "verify-email": "Xác minh email",
     "verify-phone": "Xác minh số điện thoại",
     "verify-otp": "Xác minh OTP",
@@ -79,7 +82,7 @@
     "unverified-account": "Tài khoản chưa được xác minh",
     "not-have-otp-for-account": "Không có mã OTP cho tài khoản này hoặc tài khoản đã được xác thực.",
     "otp-incorrectly": "Mã OTP không chính xác",
-    "otp-expired": "Mã OTP đã hết hạn",
+    "expired-opt": "Mã OTP đã hết hạn",
     "username": "Tên đăng nhập",
     "email": "Email",
     "phone": "Số điện thoại",
@@ -111,8 +114,8 @@
       "required": "Mật khẩu là bắt buộc"
     },
     "confirm-change-password": "Xác nhận thay đổi mật khẩu",
-    "confirm-change-password-success": "Thay đổi mật khẩu thành công",
-    "confirm-change-password-error": "Thay đổi mật khẩu thất bại",
+    "reset-password-success": "Thay đổi mật khẩu thành công",
+    "reset-password-fail": "Thay đổi mật khẩu thất bại",
     "email-or-phone-exist": "Email hoặc số điện thoại đã tồn tại",
     "register-success": "Đăng ký thành công,Vui lòng kiểm tra email để xác minh tài khoản.",
     "register-fail": "Đăng ký thất bại"

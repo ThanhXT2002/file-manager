@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
-import { User } from '../interfaces/user.interface';
+import { BehaviorSubject, catchError, Observable, of, tap, throwError } from 'rxjs';
+import { IResetPassword, User } from '../interfaces/user.interface';
 
 
 @Injectable({
@@ -10,34 +10,57 @@ import { User } from '../interfaces/user.interface';
 })
 export class AuthService {
   private apiUrl = environment.apiUrl + '/auth';
-  private currentUserSubject = new BehaviorSubject<User | null>(null);
+  public currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
   private refreshTokenTimeout: any;
+  private authCheckInProgress = false;
 
-  constructor(private http: HttpClient) {
-    this.checkAuthStatus();
-  }
+  constructor(private http: HttpClient) {}
 
-  // Kiểm tra trạng thái xác thực khi ứng dụng khởi động
-  checkAuthStatus$(): Observable<any> {
+  /**
+   * login by otp
+   **/
+
+  loginByOtp(data: { email: string; otp: string }): Observable<any> {
     return this.http
-      .get<any>(`${this.apiUrl}/me`, {
-        withCredentials: true,
+      .post<any>(`${this.apiUrl}/verify-login-otp`, data, {
+        withCredentials: true, // Quan trọng: cho phép gửi/nhận cookies
       })
       .pipe(
         tap((response) => {
           if (response && response.success) {
             this.currentUserSubject.next(response.data);
-            this.startRefreshTokenTimer();
+            this.startRefreshTokenTimer(); // Bắt đầu timer sau khi đăng nhập
+            this.checkAuthStatus().subscribe(); // Kiểm tra trạng thái xác thực ngay sau khi đăng nhập
           }
         }),
-        catchError((err) => {
-          this.currentUserSubject.next(null);
-          this.stopRefreshTokenTimer();
-          return throwError(() => err);
+        catchError((error) => {
+          console.error('Login error:', error);
+          return throwError(() => error);
         })
       );
   }
+
+  getOtpLogin(email: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/request-login-otp`, {
+      email: email,
+    });
+  }
+
+
+  resendOptLogin(email: string): Observable<any> {
+    return this.http.post<any>(
+      `${this.apiUrl}/resend-login-otp`,
+      JSON.stringify(email),
+      {
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
+  }
+
+  /**
+   * end login by otp
+   **/
 
   // Đăng nhập
   loginByPassword(credentials: {
@@ -53,7 +76,7 @@ export class AuthService {
           if (response && response.success) {
             this.currentUserSubject.next(response.data);
             this.startRefreshTokenTimer(); // Bắt đầu timer sau khi đăng nhập
-            this.checkAuthStatus();
+            this.checkAuthStatus().subscribe(); // Kiểm tra trạng thái xác thực ngay sau khi đăng nhập
           }
         }),
         catchError((error) => {
@@ -65,6 +88,10 @@ export class AuthService {
 
   // Thêm method refreshToken
   refreshToken(): Observable<any> {
+    if (!this.isLoggedIn) {
+      return of({ success: false });
+    }
+
     return this.http
       .get<any>(`${this.apiUrl}/refresh`, {
         withCredentials: true,
@@ -74,11 +101,13 @@ export class AuthService {
           if (response && response.success) {
             this.currentUserSubject.next(response.data);
             this.startRefreshTokenTimer();
-            this.checkAuthStatus();
           }
         }),
         catchError((error) => {
           console.error('Refresh token error:', error);
+
+          this.currentUserSubject.next(null);
+          this.stopRefreshTokenTimer();
           return throwError(() => error);
         })
       );
@@ -88,8 +117,6 @@ export class AuthService {
   private startRefreshTokenTimer() {
     // Refresh 5 phút trước khi hết hạn
     const refreshTimeInMs = 55 * 60 * 1000;
-
-    // Clear any existing timer
     this.stopRefreshTokenTimer();
 
     // Set new timer
@@ -99,14 +126,22 @@ export class AuthService {
     }, refreshTimeInMs);
   }
 
-  private stopRefreshTokenTimer() {
+  public stopRefreshTokenTimer() {
     if (this.refreshTokenTimeout) {
       clearTimeout(this.refreshTokenTimeout);
+      this.refreshTokenTimeout = null;
     }
   }
 
   // Đăng xuất
   logout(): Observable<any> {
+    // Nếu người dùng chưa đăng nhập, không cần gọi API đăng xuất
+    if (!this.isLoggedIn) {
+      this.stopRefreshTokenTimer();
+      this.currentUserSubject.next(null);
+      return of({ success: true });
+    }
+
     return this.http
       .post<any>(
         `${this.apiUrl}/logout`,
@@ -126,46 +161,84 @@ export class AuthService {
       );
   }
 
-  // Kiểm tra trạng thái xác thực khi ứng dụng khởi động
-  checkAuthStatus(): void {
-    this.http
+  // Kiểm tra trạng thái xác thực
+  checkAuthStatus(): Observable<any> {
+    // Tránh gọi API nhiều lần cùng lúc
+    if (this.authCheckInProgress) {
+      return this.currentUser$;
+    }
+
+    this.authCheckInProgress = true;
+
+    return this.http
       .get<any>(`${this.apiUrl}/me`, {
         withCredentials: true,
       })
-      .subscribe({
-        next: (response) => {
+      .pipe(
+        tap((response) => {
           if (response && response.success) {
             this.currentUserSubject.next(response.data);
             this.startRefreshTokenTimer();
           }
-        },
-        error: () => {
+          this.authCheckInProgress = false;
+        }),
+        catchError((error) => {
           this.currentUserSubject.next(null);
           this.stopRefreshTokenTimer();
-        },
-      });
+          this.authCheckInProgress = false;
+          // Không throw error khi auth check thất bại, chỉ đánh dấu không đăng nhập
+          return of(null);
+        })
+      );
   }
 
   // Đăng ký
-  register(user: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/register`, user);
+  register(data: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/register`, data);
   }
 
   // Xác minh OTP
-  verifyOtp(data: { email: string; otp: string }): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/verify-otp`, data);
+  verifyRegisterOtp(data: { email: string; otp: string }): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/verify-register-otp`, data);
   }
 
   // Gửi lại OTP
-  resendOtp(email: string): Observable<any> {
+  resendRegisterOtp(email: string): Observable<any> {
     return this.http.post<any>(
-      `${this.apiUrl}/resend-otp`,
+      `${this.apiUrl}/resend-register-otp`,
       JSON.stringify(email),
       {
         headers: { 'Content-Type': 'application/json' },
       }
     );
   }
+
+  /**
+   * quên mật khẩu
+   **/
+  getOtpFogotPassword(email: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/request-password-reset`, {
+      email: email,
+    });
+  }
+
+  resetPassword(data: IResetPassword): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/reset-password`, data);
+  }
+
+  resendOptFogotPassword(email: string): Observable<any> {
+    return this.http.post<any>(
+      `${this.apiUrl}/resend-password-reset-otp`,
+      JSON.stringify(email),
+      {
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
+  }
+
+  /**
+   * kết thúc quên mật khẩu
+   **/
 
   // Helper methods
   get isLoggedIn(): boolean {

@@ -38,6 +38,7 @@
     "zh": "中文"
   },
   "auth": {
+    "Invalid-status": "发生错误。请稍后再试。",
     "login": "登录",
     "login-success": "登录成功",
     "login-fail": "登录失败",
@@ -54,6 +55,8 @@
     "send-otp-success": "发送OTP成功",
     "send-otp-fail": "发送OTP失败",
     "send-otp-waiting": "等待OTP",
+    "not-send-email": "无法发送OTP电子邮件。请稍后再试。",
+    "verify-now": "立即验证",
     "verify-email": "验证邮箱",
     "verify-phone": "验证手机号",
     "verify-otp": "验证OTP",
@@ -78,7 +81,7 @@
     "suspended-account": "帐户暂时锁定",
     "unverified-account": "帐户未验证",
     "not-have-otp-for-account": "此帐户没有OTP",
-    "otp-incorrectly": "OTP不正确",
+    "expired-opt": "OTP不正确",
     "otp-expired": " OTP已过期",
     "username": "用户名",
     "email": "电子邮箱",
@@ -111,8 +114,8 @@
       "required": "密码是必需的"
     },
     "confirm-change-password": "确认更改密码",
-    "confirm-change-password-success": "更改密码成功",
-    "confirm-change-password-error": "更改密码失败",
+    "reset-password-success": "更改密码成功",
+    "reset-password-fail": "更改密码失败",
     "email-or-phone-exist": "电子邮箱或手机号码已存在",
     "register-success": "注册成功，请检查您的电子邮件以验证账户。",
     "register-fail": "注册失败"

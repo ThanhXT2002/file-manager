@@ -1,0 +1,49 @@
+    <div class="p-2 w-full">
+      <p-inputgroup>
+        <p-floatlabel variant="on" styleClass="w-full">
+          <input
+            pInputText
+            id="email"
+            class="w-full"
+            pSize="large"
+            [formControl]="emailControl"
+            autocomplete="off"
+          />
+          <label for="email">{{ "auth.email" | translate }}</label>
+        </p-floatlabel>
+        @if(otpStatus === 0){
+          <p-button
+            (onClick)="getOtp()"
+            [disabled]="emailControl.invalid"
+            label="{{ 'auth.get-otp' | translate }}"
+            styleClass="w-full"
+            class="w-44"
+            severity="info"
+          />
+        }@else if(otpStatus === 1){
+          <p-button styleClass="w-full" class="w-44" severity="info">
+            {{ minutes }}:{{ seconds < 10 ? '0' + seconds : seconds }}
+          </p-button>
+        }@else{
+          <p-button
+            (onClick)="resendOtp()"
+            label="{{ 'auth.send-otp-again' | translate }}"
+            styleClass="w-full"
+            class="w-44"
+            severity="info"
+          />
+        }
+      </p-inputgroup>
+    </div>
+    <div class="p-2 custom-otp">
+      <label for="otp" class="font-medium text-gray-500 dark:text-gray-400 ml-2 mb-1">
+        {{ "auth.enter-otp" | translate }}
+      </label>
+      <p-inputotp
+        [formControl]="otpControl"
+        size="large"
+        [length]="6"
+        [integerOnly]="true"
+        styleClass="text-2xl"
+      />
+    </div>

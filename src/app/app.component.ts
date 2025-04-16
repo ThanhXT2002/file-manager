@@ -43,8 +43,7 @@ export class AppComponent {
   ) {}
 
   ngOnInit() {
-
-    this.authService.checkAuthStatus$().subscribe();
+    this.authService.checkAuthStatus().subscribe();
 
     // Đăng ký theo dõi thay đổi ngôn ngữ
     this.subscriptions.push(

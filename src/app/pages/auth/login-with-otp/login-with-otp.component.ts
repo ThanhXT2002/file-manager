@@ -7,19 +7,27 @@ import { Router } from '@angular/router';
 import { BasicPage } from '../../../core/shares/basic-page';
 import { environment } from '../../../../environments/environment';
 import { LinkRegisterForgotPasswordComponent } from "../components/link-register-forgot-password/link-register-forgot-password.component";
+import { AuthService } from '../../../core/service/auth.service';
+import { interval, takeWhile } from 'rxjs';
+import { ResponseHandlerService } from '../../../core/service/response-handler.service';
+import { FormEmailOtpChildComponent } from "../components/form-email-otp-child/form-email-otp-child.component";
 
 @Component({
   selector: 'app-login-with-otp',
-  imports: [GlobalModule, AuthLibModule,  LinkRegisterForgotPasswordComponent],
+  imports: [GlobalModule, AuthLibModule, LinkRegisterForgotPasswordComponent, FormEmailOtpChildComponent],
   templateUrl: './login-with-otp.component.html',
   styleUrl: './login-with-otp.component.scss',
 })
 export class LoginWithOtpComponent extends BasicPage {
   loginForm!: FormGroup;
+  otpStatus: number = 0;
+
   constructor(
     private fb: FormBuilder,
     protected override globalSer: GlobalService,
-    private router: Router
+    private authService: AuthService,
+    private router: Router,
+    private responseHandler: ResponseHandlerService
   ) {
     super(globalSer);
     this.createForm();
@@ -31,105 +39,44 @@ export class LoginWithOtpComponent extends BasicPage {
   ngOnInit(): void {
     if (!environment.production) {
       this.loginForm.patchValue({
-        userName: 'tranxuanthanhtxt2002@gamil.com',
+        email: 'tranthanh0898256009@gmail.com',
       });
     }
   }
 
   createForm() {
     this.loginForm = this.fb.group({
-      userName: ['', [Validators.required]],
+      email: ['', [Validators.required, Validators.email]],
+      otp: ['', [Validators.required, Validators.minLength(6)]],
     });
   }
 
 
   onLogin() {
-    console.log('Ok');
-    // this.beginCallApi('Đang đăng nhập...');
-    // this.userApi.loginPassword(this.loginData).subscribe({
-    //   error: (err) => {
-    //     this.messageBoxSer.error(err);
-    //   },
-    //   next: (res) => {
-    //     switch (res.code) {
-    //       case ELoginStatus.OtpSuccess: {
-    //         this.userApi.loginCompletely(res.result ?? '');
-    //         break;
-    //       }
-    //       case ELoginStatus.EmailNotFound: {
-    //         const dialogRef = this.messageBoxSer.ok({
-    //           html: res.message,
-    //           buttons: [
-    //             MessageBoxButton.CreateOK({ html: 'Đăng ký tài khoản' }),
-    //             MessageBoxButton.CreateClose(),
-    //           ],
-    //         });
-    //         dialogRef.afterClosed().subscribe((result) => {
-    //           if (result == 'ok') {
-    //             this.openLoading();
-    //             this.router.navigate(['auths/sign-up-email'], {
-    //               queryParams: { email: this.loginData.username },
-    //             });
-    //           }
-    //         });
-    //         break;
-    //       }
-    //       case ELoginStatus.PhoneNotFound: {
-    //         const dialogRef = this.messageBoxSer.ok({
-    //           html: res.message,
-    //           buttons: [
-    //             MessageBoxButton.CreateOK({ html: 'Đăng ký tài khoản' }),
-    //             MessageBoxButton.CreateClose(),
-    //           ],
-    //         });
-    //         dialogRef.afterClosed().subscribe((result) => {
-    //           if (result == 'ok') {
-    //             this.openLoading();
-    //             this.router.navigate(['auths/sign-up-phone'], {
-    //               queryParams: { phone: this.loginData.username },
-    //             });
-    //           }
-    //         });
-    //         break;
-    //       }
-    //       case ELoginStatus.Unconfimred: {
-    //         const dialogRef = this.messageBoxSer.ok({
-    //           html: res.message,
-    //           buttons: [
-    //             MessageBoxButton.CreateOK({ html: 'Xác thực tài khoản' }),
-    //             MessageBoxButton.CreateClose(),
-    //           ],
-    //         });
-    //         dialogRef.afterClosed().subscribe((result) => {
-    //           if (result == 'ok') {
-    //             this.verifyAccount();
-    //           }
-    //         });
-    //         break;
-    //       }
-    //     }
-    //   },
-    // });
+    if (this.loginForm.valid) {
+      const data = this.loginForm.value;
+      console.log('Form data:', data);
+      this.globalSer.openLoading();
+      this._subscriptions.push(
+        this.authService.loginByOtp(data).subscribe({
+          next: () => {
+            this.responseHandler.handleSuccess('auth.login-success', () => {
+              this.router.navigate(['/manager-file/home']);
+            });
+          },
+          error: (error) => {
+            this.responseHandler.handleErrorWithUnverifiedCheck(
+              error,
+              () => this.loginForm.get('email')?.value
+            );
+          },
+        })
+      );
+    }
   }
 
-  verifyAccount() {
-    // this.beginCallApi();
-    // this.userApi.createOtp(this.loginData.username).subscribe({
-    //   error: (err) => {
-    //     this.messageBoxSer.error(err);
-    //   },
-    //   next: (res) => {
-    //     this.snackSer.success(res);
-    //   },
-    //   complete: () => {
-    //     this.openLoading();
-    //     this.router.navigate(['auths/verify-account'], {
-    //       queryParams: { username: this.loginData.username },
-    //     });
-    //   },
-    // });
+  goBack() {
+    window.history.go(-1);
   }
-
-
 }
 

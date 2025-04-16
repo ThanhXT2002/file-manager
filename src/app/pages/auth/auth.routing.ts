@@ -6,7 +6,6 @@ import { LoginWithOtpComponent } from "./login-with-otp/login-with-otp.component
 import { ForgotPasswordComponent } from "./forgot-password/forgot-password.component";
 import { VerifyAccountComponent } from "./verify-account/verify-account.component";
 import { RegisterComponent } from "./register/register.component";
-import { ResetPasswordComponent } from "./reset-password/reset-password.component";
 import { VerifyAccountByEmailComponent } from "./verify-account-by-email/verify-account-by-email.component";
 
 
@@ -23,10 +22,6 @@ const routes: Routes = [
   {
     path: 'forgot-password',
     component: ForgotPasswordComponent,
-  },
-  {
-    path: 'reset-password',
-    component: ResetPasswordComponent,
   },
   {
     path: 'verify-account',

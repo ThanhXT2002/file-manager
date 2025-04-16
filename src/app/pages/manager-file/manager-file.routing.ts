@@ -5,26 +5,26 @@ import { HomeComponent } from './home/home.component';
 import { ProfileComponent } from './profile/profile.component';
 import { SettingComponent } from './setting/setting.component';
 import { NotificationComponent } from './notification/notification.component';
+import { authGuard } from '../../core/guards/auth.guard';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   {
-      path: 'home',
-      component: HomeComponent,
+    path: 'home',
+    component: HomeComponent,
   },
   {
-      path: 'profile',
-      component: ProfileComponent,
+    path: 'profile',
+    component: ProfileComponent,
   },
   {
-      path: 'setting',
-      component: SettingComponent,
+    path: 'setting',
+    component: SettingComponent,
   },
   {
-      path: 'notification',
-      component: NotificationComponent,
+    path: 'notification',
+    component: NotificationComponent,
   },
-
 ];
 @NgModule({
   declarations: [],

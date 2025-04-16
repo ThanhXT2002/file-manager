@@ -11,6 +11,7 @@ import { PasswordValidators } from '../../../core/validators/password.validator'
 import { base64Helper } from '../../../core/helpers/util';
 import { AuthService } from '../../../core/service/auth.service';
 import { CustomToastService } from '../../../core/service/custom-toast.service';
+import { ResponseHandlerService } from '../../../core/service/response-handler.service';
 
 @Component({
   selector: 'app-register',
@@ -24,9 +25,8 @@ export class RegisterComponent extends BasicPage {
     private router: Router,
     private fb: FormBuilder,
     private authService: AuthService,
-    private toastService: CustomToastService,
     protected override globalSer: GlobalService,
-    private translateService: TranslateService
+    private responseHandler: ResponseHandlerService
   ) {
     super(globalSer);
     this.createForm();
@@ -51,55 +51,23 @@ export class RegisterComponent extends BasicPage {
     if (this.registerForm.valid) {
       const email = this.registerForm.get('email')?.value;
       const encodedData = base64Helper.objectToBase64(email);
+
       // Call API to register
       this.globalSer.openLoading();
       this.authService.register(this.registerForm.value).subscribe({
         next: () => {
-          this.globalSer.closeLoading();
-          this.toastService.showToast('success', {
-            detail: this.translateService.instant('auth.register-success'),
-            sticky: false,
-            life: 50000,
-          });
-          // Sau khi đăng ký thành công, điều hướng đến trang xác minh OTP
-          this.router.navigate(['/auth/verify-otp-with-email'], {
-            queryParams: {
-              data: encodedData,
-            },
+          this.responseHandler.handleSuccess('auth.register-success', () => {
+            // Sau khi đăng ký thành công, điều hướng đến trang xác minh OTP
+            this.router.navigate(['/auth/verify-otp-with-email'], {
+              queryParams: {
+                data: encodedData,
+              },
+            });
           });
         },
         error: (error) => {
-          this.globalSer.closeLoading();
-          let errorMessage =
-            this.translateService.instant('auth.register-fail');
-          const errorCode = error.error.errorCode;
-          if (!environment.production) {
-            console.log('Error code:', errorCode);
-          }
-
-          switch (errorCode) {
-            case 'EMAIL_OR_PHONE_EXIST':
-              errorMessage = this.translateService.instant(
-                'auth.email-or-phone-exist'
-              );
-              break;
-            case 'CFPW':
-              errorMessage = this.translateService.instant(
-                'auth.confirm-password-not-match'
-              );
-              break;
-            default:
-              errorMessage = this.translateService.instant(
-                'common.unexpected-error'
-              );
-              break;
-          }
-
-          this.toastService.showToast('error', {
-            detail: errorMessage,
-            sticky: false,
-            life: 5000,
-          });
+          // Trường hợp này không cần kiểm tra UNVERIFIED-ACCOUNT vì người dùng đang đăng ký mới
+          this.responseHandler.handleError(error);
         },
       });
     } else {

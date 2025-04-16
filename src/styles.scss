@@ -53,6 +53,10 @@ body {
       @apply text-violet-800 animate-zoom3d
     }
 
+    .custom-otp .p-inputotp {
+      @apply justify-between
+    }
+
 }
 
 @layer utilities {

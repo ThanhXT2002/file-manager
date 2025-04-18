@@ -19,6 +19,13 @@ export interface IUserRegister {
   phone: string;
   confirmPassword: string;
 }
+
+export interface IUpdateProfile {
+  fullName?: string;
+  address?: string;
+  avatar?: File | null;
+}
+
 export interface IUserUpdate {
   id: number;
   fullName: string;

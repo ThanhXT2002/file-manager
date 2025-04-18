@@ -119,7 +119,9 @@
     "reset-password-fail": "Change password failed",
     "email-or-phone-exist": "Email or phone number already exists",
     "register-success": "Registration successful. Please check your email to verify your account.",
-    "register-fail": "Registration failed"
+    "register-fail": "Registration failed",
+    "update-user-information-success": "Update user information successfully",
+    "update-user-information-fail": "Update user information failed"
   },
   "toast": {
     "success": "Success!",

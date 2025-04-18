@@ -118,7 +118,9 @@
     "reset-password-fail": "更改密码失败",
     "email-or-phone-exist": "电子邮箱或手机号码已存在",
     "register-success": "注册成功，请检查您的电子邮件以验证账户。",
-    "register-fail": "注册失败"
+    "register-fail": "注册失败",
+    "update-user-information-success": "更新用户信息成功",
+    "update-user-information-fail": "更新用户信息失败"
   },
   "toast": {
     "success": "成功!",

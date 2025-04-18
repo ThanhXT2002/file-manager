@@ -25,6 +25,7 @@
     "session-expired": "Phiên đã hết hạn",
     "Invalid-status":"Đã có lỗi xảy ra. Vui lòng thử lại sau.",
     "info-resend-otp": "Nếu bạn chưa nhận được mã xác minh, vui lòng kiểm tra thư mục spam hoặc yêu cầu gửi lại mã."
+
   },
   "nav": {
     "home": "Trang chủ",
@@ -118,7 +119,9 @@
     "reset-password-fail": "Thay đổi mật khẩu thất bại",
     "email-or-phone-exist": "Email hoặc số điện thoại đã tồn tại",
     "register-success": "Đăng ký thành công,Vui lòng kiểm tra email để xác minh tài khoản.",
-    "register-fail": "Đăng ký thất bại"
+    "register-fail": "Đăng ký thất bại",
+    "update-user-information-success": "Cập nhật thông tin người dùng thành công",
+    "update-user-information-fail": "Cập nhật thông tin người dùng thất bại"
   },
   "toast": {
     "success": "Thành công!",

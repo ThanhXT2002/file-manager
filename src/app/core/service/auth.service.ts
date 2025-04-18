@@ -1,9 +1,20 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, catchError, Observable, of, tap, throwError } from 'rxjs';
-import { IResetPassword, User } from '../interfaces/user.interface';
-
+import {
+  BehaviorSubject,
+  catchError,
+  Observable,
+  of,
+  tap,
+  throwError,
+} from 'rxjs';
+import {
+  IResetPassword,
+  IUpdateProfile,
+  User,
+} from '../interfaces/user.interface';
+import { ApiResponse } from '../interfaces/api-response.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -46,7 +57,6 @@ export class AuthService {
       email: email,
     });
   }
-
 
   resendOptLogin(email: string): Observable<any> {
     return this.http.post<any>(
@@ -238,6 +248,37 @@ export class AuthService {
 
   /**
    * kết thúc quên mật khẩu
+   **/
+
+  /**
+   * cập nhật thông tin cá nhân
+   **/
+
+  // Interface for profile update
+
+  updateProfile(data: IUpdateProfile): Observable<ApiResponse<User>> {
+    const formData = new FormData();
+
+    if (data.fullName) formData.append('fullName', data.fullName);
+    if (data.address) formData.append('address', data.address);
+    if (data.avatar) formData.append('avatar', data.avatar);
+
+    return this.http
+      .put<ApiResponse<User>>(`${this.apiUrl}/update-profile`, formData, {
+        withCredentials: true,
+      })
+      .pipe(
+        tap((response) => {
+          // Nếu cập nhật thành công, cập nhật lại thông tin người dùng hiện tại
+          if (response && response.success && response.data) {
+            this.currentUserSubject.next(response.data);
+          }
+        })
+      );
+  }
+
+  /**
+   * cập nhật thông tin cá nhân
    **/
 
   // Helper methods

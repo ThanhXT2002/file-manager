@@ -1,14 +1,22 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AvatarModule } from 'primeng/avatar';
 import { AuthService } from '../../../../core/service/auth.service';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { GlobalService } from '../../../../core/service/global.service';
 import { Router, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { User } from '../../../../core/interfaces/user.interface';
+import { IUpdateProfile, User } from '../../../../core/interfaces/user.interface';
 import { TranslateService } from '@ngx-translate/core';
 import { CustomToastService } from '../../../../core/service/custom-toast.service';
+import { FloatLabelModule } from 'primeng/floatlabel';
+import { InputTextModule } from 'primeng/inputtext';
+import { DialogModule, Dialog } from 'primeng/dialog';
+import { FileUpload } from 'primeng/fileupload';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ResponseHandlerService } from '../../../../core/service/response-handler.service';
+import { NoCachePipe } from '../../../../core/pipe/no-cache.pipe';
+
 
 class ItemMenu {
   title: string = '';
@@ -28,7 +36,20 @@ class ItemMenu {
 
 @Component({
   selector: 'app-toggle-avatar',
-  imports: [AvatarModule, CommonModule, ButtonModule, RouterModule],
+  imports: [
+    AvatarModule,
+    CommonModule,
+    ButtonModule,
+    RouterModule,
+    DialogModule,
+    InputTextModule,
+    Dialog,
+    FileUpload,
+    FloatLabelModule,
+    FormsModule,
+    ReactiveFormsModule,
+    NoCachePipe,
+  ],
   templateUrl: './toggle-avatar.component.html',
   styleUrl: './toggle-avatar.component.scss',
 })
@@ -37,16 +58,33 @@ export class ToggleAvatarComponent implements OnInit {
   private subscription!: Subscription;
   user: User | null = null;
   isThumbtack: boolean = false;
+  isShowDialogUpdateInfo: boolean = true;
+  updateInforForm!: FormGroup;
+  selectedFile: File | null = null;
 
   constructor(
     protected authService: AuthService,
     private globalService: GlobalService,
     private router: Router,
     private toastService: CustomToastService,
-    private translateService: TranslateService
-  ) {}
+    private translateService: TranslateService,
+    private fb: FormBuilder,
+    private responseHandler: ResponseHandlerService
+  ) {
+    this.updateInforForm = this.fb.group({
+      fullName: ['', Validators.required],
+      address: ['', Validators.required],
+    });
+  }
 
   lstItemMenus = {
+    updateInfor: new ItemMenu({
+      title: 'Cập nhật thông tin cá nhân',
+      iconFont: `<i class="fa-solid fa-circle-up"></i>`,
+      click: () => {
+        this.isShowDialogUpdateInfo = true;
+      },
+    }),
     dashboard: new ItemMenu({
       title: 'Dashboard',
       iconFont: `<i class="fa-solid fa-gauge"></i>`,
@@ -74,6 +112,11 @@ export class ToggleAvatarComponent implements OnInit {
     this.subscription = this.authService.currentUser$.subscribe((user) => {
       this.user = user;
       this.reBuildMenu();
+      this.updateInforForm.patchValue({
+        fullName: user?.fullName,
+        address: user?.address,
+        avatar: user?.avatar,
+      });
     });
   }
 
@@ -86,7 +129,9 @@ export class ToggleAvatarComponent implements OnInit {
     if (this.user?.role == 1) {
       this.menus.push(lstItemMenus.dashboard);
     }
-    this.menus.push(...[lstItemMenus.setting, lstItemMenus.logout]);
+    this.menus.push(
+      ...[lstItemMenus.updateInfor, lstItemMenus.setting, lstItemMenus.logout]
+    );
     console.log('rebuild menu3', this.menus);
   }
 
@@ -94,6 +139,44 @@ export class ToggleAvatarComponent implements OnInit {
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
+  }
+
+  onFileSelect(event: any): void {
+    if (event.files && event.files.length) {
+      this.selectedFile = event.files[0];
+    }
+  }
+  avatarVersion = 0;
+
+  onUpdate(): void {
+    if (this.updateInforForm.invalid) {
+      return;
+    }
+
+    const updateData: IUpdateProfile = {
+      fullName: this.updateInforForm.get('fullName')?.value,
+      address: this.updateInforForm.get('address')?.value,
+      avatar: this.selectedFile,
+    };
+
+    this.authService.updateProfile(updateData).subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.responseHandler.handleSuccess(
+            'auth.update-user-information-success',
+            () => {
+              this.avatarVersion++;
+              this.user = response.data; // Cập nhật thông tin người dùng
+              this.isShowDialogUpdateInfo = false;
+              this.selectedFile = null;
+            }
+          );
+        }
+      },
+      error: (error) => {
+        this.responseHandler.handleError(error);
+      },
+    });
   }
 
   logout() {
@@ -115,6 +198,17 @@ export class ToggleAvatarComponent implements OnInit {
         });
       },
     });
+  }
+
+  onFileUploadError(event: any): void {
+    console.log('File upload error:', event);
+    // Lấy thông tin lỗi từ event
+    if (event.type === 'filesize') {
+      this.toastService.showToast('error', {
+        detail: 'File quá lớn. Vui lòng chọn file có kích thước nhỏ hơn 20MB',
+        life: 5000,
+      });
+    }
   }
 
   toggleThumbtack() {

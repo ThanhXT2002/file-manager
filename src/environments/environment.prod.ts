@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://localhost:7126/api',
+  apiUrl: 'https://api-file-manager.tranxuanthanh.vn/api',
 };

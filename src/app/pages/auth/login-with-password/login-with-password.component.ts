@@ -41,7 +41,7 @@ export class LoginWithPasswordComponent extends BasicPage {
   }
 
   ngOnInit(): void {
-    if (!environment.production) {
+    if (environment.production) {
       this.loginForm.patchValue({
         userName: 'tranxuanthanhtxt2002@gmail.com',
         password: 'Thanh2002@',

@@ -6,6 +6,7 @@ import { Ripple } from 'primeng/ripple';
 import { AvatarModule } from 'primeng/avatar';
 import { StyleClass } from 'primeng/styleclass';
 import { LogoComponent } from "../../../components/logo/logo.component";
+import { ToggleAvatarComponent } from "../toggle-avatar/toggle-avatar.component";
 
 @Component({
   selector: 'app-drawer',
@@ -16,7 +17,8 @@ import { LogoComponent } from "../../../components/logo/logo.component";
     Ripple,
     AvatarModule,
     StyleClass,
-    LogoComponent
+    LogoComponent,
+    ToggleAvatarComponent
 ],
   templateUrl: './drawer.component.html',
   styleUrl: './drawer.component.scss',

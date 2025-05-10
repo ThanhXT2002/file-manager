@@ -1,36 +1,26 @@
 @if (user) {
 <div class="h-full relative">
-  <div class="flex__middle group md:py-4">
-    <img [src]="user.avatar + '?v=' + avatarVersion" [alt]="user.fullName" class="h-7 w-7 rounded-full object-cover hover:border-2 cursor-pointer" />
-    <!-- <p-avatar
-      image="{{ user.avatar }}"
-      class="hover:border-2 h-7 w-7 object-center cursor-pointer"
-      shape="circle"
-    /> -->
-    <div [ngClass]="!isThumbtack ? 'hidden group-hover:block' : ''">
+  <div class="flex__middle   md:py-4"
+  >
+    <img
+      [src]="user.avatar + '?v=' + avatarVersion"
+      [alt]="user.fullName"
+      class=" h-10 w-10 md:h-7 md:w-7 rounded-full object-cover hover:border-2 cursor-pointer"
+      (click)="toggleBoxProfile()"
+
+    />
+      @if(isShowBoxProfile) {
       <div
-        class="absolute top-0 right-0 mt-14 shadow-lg z-10 bg-white dark:bg-gray-800 border-2 border-primary"
+        class=" fixed bottom-4 md:bottom-auto md:absolute md:top-0 right-0 md:mt-14 shadow-lg z-10 bg-white dark:bg-gray-800 border-2 border-primary"
       >
         <div class="w-full p-3">
-          <button
-            class="p-2 absolute top-0 right-0"
-            (click)="toggleThumbtack()"
-          >
-            <i
-              class="fa-solid"
-              [ngClass]="
-                isThumbtack ? 'fa-thumbtack rotate-90' : 'fa-thumbtack-slash'
-              "
-            ></i>
-          </button>
           <div class="flex__start gap-x-3">
-            <img [src]="user.avatar + '?v=' + avatarVersion" routerLink="/manager-file/profile" [alt]="user.fullName" class="h-10 w-10 rounded-full object-cover hover:border-2 cursor-pointer" />
-            <!-- <p-avatar
+            <img
+              [src]="user.avatar + '?v=' + avatarVersion"
               routerLink="/manager-file/profile"
-              image="{{ user.avatar }}"
-              class="hover:border-2 h-10 w-10  cursor-pointer"
-              shape="circle"
-            />-->
+              [alt]="user.fullName"
+              class="h-10 w-10 rounded-full object-cover hover:border-2 cursor-pointer"
+            />
             <div class="text-sm">
               <p class="font-semibold">{{ user.fullName }}</p>
               <p class="text-xs">
@@ -58,59 +48,84 @@
           }
         </ul>
       </div>
-    </div>
+    }
   </div>
 </div>
 
 <p-dialog
   [(visible)]="isShowDialogUpdateInfo"
   [modal]="true"
-  [style]="{ width: '25rem' }"
+
+  styleClass="w-[100vw] md:w-[25rem] fixed left-0 md:left-auto"
 >
   <ng-template #header>
     <div class="inline-flex items-center justify-center gap-2">
-      <img [src]="user.avatar + '?v=' + avatarVersion" [alt]="user.fullName" class="h-14 w-14 rounded-full object-cover hover:border-2 cursor-pointer" />
+      <img
+        [src]="user.avatar + '?v=' + avatarVersion"
+        [alt]="user.fullName"
+        class="h-14 w-14 rounded-full object-cover hover:border-2 cursor-pointer"
+      />
       <div class="flex flex-col">
-        <span class="font-extrabold whitespace-nowrap text-lg">{{ user.fullName }}</span>
+        <span class="font-extrabold whitespace-nowrap text-lg">{{
+          user.fullName
+        }}</span>
         <span class="font-medium whitespace-nowrap">{{ user.email }}</span>
       </div>
-
     </div>
   </ng-template>
-  <div class="flex items-center  mb-4">
+  <div class="flex items-center mb-4">
     <p-floatlabel variant="in" class="w-full">
-      <input pInputText id="in_label" pSize="small" [value]="user.phone" [disabled]="true" class="w-full"  />
+      <input
+        pInputText
+        id="in_label"
+        pSize="small"
+        [value]="user.phone"
+        [disabled]="true"
+        class="w-full"
+      />
       <label for="in_label">Số điện thoại</label>
     </p-floatlabel>
   </div>
   <form [formGroup]="updateInforForm">
     <div class="flex items-center mb-4">
       <p-floatlabel variant="in" class="w-full">
-        <input pInputText id="fullName" pSize="small" formControlName="fullName" class="w-full" />
+        <input
+          pInputText
+          id="fullName"
+          pSize="small"
+          formControlName="fullName"
+          class="w-full"
+        />
         <label for="fullName">Họ tên</label>
       </p-floatlabel>
     </div>
 
     <div class="flex items-center mb-2">
       <p-floatlabel variant="in" class="w-full">
-        <input pInputText id="address" pSize="small" formControlName="address" class="w-full" />
+        <input
+          pInputText
+          id="address"
+          pSize="small"
+          formControlName="address"
+          class="w-full"
+        />
         <label for="address">Địa chỉ</label>
       </p-floatlabel>
     </div>
 
     <div class="flex items-center !my-4">
       <p-fileupload
-  mode="basic"
-  chooseLabel="Chọn ảnh"
-  chooseIcon="pi pi-upload"
-  name="avatar"
-  styleClass="custom-upload-avatar w-full"
-  maxFileSize="20000000"
-  (onSelect)="onFileSelect($event)"
-  (onError)="onFileUploadError($event)"
-  invalidFileSizeMessageDetail="Kích thước file tối đa là 20MB"
-  accept="image/*"
-></p-fileupload>
+        mode="basic"
+        chooseLabel="Chọn ảnh"
+        chooseIcon="pi pi-upload"
+        name="avatar"
+        styleClass="custom-upload-avatar w-full"
+        maxFileSize="20000000"
+        (onSelect)="onFileSelect($event)"
+        (onError)="onFileUploadError($event)"
+        invalidFileSizeMessageDetail="Kích thước file tối đa là 20MB"
+        accept="image/*"
+      ></p-fileupload>
     </div>
   </form>
 

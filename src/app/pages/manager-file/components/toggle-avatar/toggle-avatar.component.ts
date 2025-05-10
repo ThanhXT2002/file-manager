@@ -15,6 +15,7 @@ import { DialogModule, Dialog } from 'primeng/dialog';
 import { FileUpload } from 'primeng/fileupload';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ResponseHandlerService } from '../../../../core/service/response-handler.service';
+import { BreakpointObserver } from '@angular/cdk/layout';
 import { NoCachePipe } from '../../../../core/pipe/no-cache.pipe';
 
 
@@ -56,10 +57,11 @@ export class ToggleAvatarComponent implements OnInit {
   menus: Array<ItemMenu> = [];
   private subscription!: Subscription;
   user: User | null = null;
-  isThumbtack: boolean = false;
-  isShowDialogUpdateInfo: boolean = true;
+
+  isShowDialogUpdateInfo: boolean = false;
   updateInforForm!: FormGroup;
   selectedFile: File | null = null;
+  isShowBoxProfile: boolean = false;
 
   constructor(
     protected authService: AuthService,
@@ -82,6 +84,7 @@ export class ToggleAvatarComponent implements OnInit {
       iconFont: `<i class="fa-solid fa-circle-up"></i>`,
       click: () => {
         this.isShowDialogUpdateInfo = true;
+        this.isShowBoxProfile = false;
       },
     }),
     dashboard: new ItemMenu({
@@ -210,7 +213,7 @@ export class ToggleAvatarComponent implements OnInit {
     }
   }
 
-  toggleThumbtack() {
-    this.isThumbtack = !this.isThumbtack;
+  toggleBoxProfile() {
+    this.isShowBoxProfile = !this.isShowBoxProfile;
   }
 }

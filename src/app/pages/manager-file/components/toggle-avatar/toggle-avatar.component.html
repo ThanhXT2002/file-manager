@@ -1,17 +1,16 @@
 @if (user) {
-<div class="h-full relative">
-  <div class="flex__middle   md:py-4"
-  >
-    <img
-      [src]="user.avatar + '?v=' + avatarVersion"
-      [alt]="user.fullName"
-      class=" h-10 w-10 md:h-7 md:w-7 rounded-full object-cover hover:border-2 cursor-pointer"
-      (click)="toggleBoxProfile()"
-
-    />
+<div class="flex__middle">
+  <div class="h-full relative">
+    <div class="flex__middle md:py-4">
+      <img
+        [src]="user.avatar + '?v=' + avatarVersion"
+        [alt]="user.fullName"
+        class="h-12 w-12 md:h-8 md:w-8 rounded-full object-cover hover:border-2 cursor-pointer"
+        (click)="toggleBoxProfile()"
+      />
       @if(isShowBoxProfile) {
       <div
-        class=" fixed bottom-4 md:bottom-auto md:absolute md:top-0 right-0 md:mt-14 shadow-lg z-10 bg-white dark:bg-gray-800 border-2 border-primary"
+        class="fixed bottom-4 md:bottom-auto md:absolute md:top-0 right-0 md:mt-14 shadow-lg z-10 bg-white dark:bg-gray-800 border-2 border-primary"
       >
         <div class="w-full p-3">
           <div class="flex__start gap-x-3">
@@ -19,7 +18,7 @@
               [src]="user.avatar + '?v=' + avatarVersion"
               routerLink="/manager-file/profile"
               [alt]="user.fullName"
-              class="h-10 w-10 rounded-full object-cover hover:border-2 cursor-pointer"
+              class="h-12 w-12 rounded-full object-cover hover:border-2 cursor-pointer"
             />
             <div class="text-sm">
               <p class="font-semibold">{{ user.fullName }}</p>
@@ -48,14 +47,22 @@
           }
         </ul>
       </div>
-    }
+      }
+    </div>
+  </div>
+  <div class="md:hidden ml-3">
+    <b>
+      {{ user.fullName }}
+    </b>
+    <p>
+      {{ user.phone }}
+    </p>
   </div>
 </div>
 
 <p-dialog
   [(visible)]="isShowDialogUpdateInfo"
   [modal]="true"
-
   styleClass="w-[100vw] md:w-[25rem] fixed left-0 md:left-auto"
 >
   <ng-template #header>

@@ -3,8 +3,10 @@
     <app-drawer></app-drawer>
   </section>
   <section class="flex__start">
-    <button class="rounded-md transition duration-300 h-9 w-9 hover:border-2 hover:bg-primary hidden md:flex__middle  md:hidden mr-2">
-      <i class="fa-solid fa-bars-progress text-xl text__wd"></i>
+    <button 
+    (click)="toggleMenuSider()"
+    class="rounded-md transition duration-300 h-9 w-9 hover:border-2 hover:bg-primary hidden md:flex__middle  md:hidden mr-2">
+      <i class="fa-solid fa-sliders text-xl text__wd"></i>
     </button>
     <app-logo></app-logo>
   </section>

@@ -7,6 +7,7 @@ import { AvatarModule } from 'primeng/avatar';
 import { StyleClass } from 'primeng/styleclass';
 import { LogoComponent } from "../../../components/logo/logo.component";
 import { ToggleAvatarComponent } from "../toggle-avatar/toggle-avatar.component";
+import { MenuSiderComponent } from "../menu-sider/menu-sider.component";
 
 @Component({
   selector: 'app-drawer',
@@ -18,7 +19,8 @@ import { ToggleAvatarComponent } from "../toggle-avatar/toggle-avatar.component"
     AvatarModule,
     StyleClass,
     LogoComponent,
-    ToggleAvatarComponent
+    ToggleAvatarComponent,
+    MenuSiderComponent
 ],
   templateUrl: './drawer.component.html',
   styleUrl: './drawer.component.scss',

@@ -6,6 +6,7 @@ import { MenuBarComponent } from "../menu-bar/menu-bar.component";
 import { User } from '../../../../core/interfaces/user.interface';
 import { ToggleNotifiComponent } from "../toggle-notifi/toggle-notifi.component";
 import { ToggleAvatarComponent } from "../toggle-avatar/toggle-avatar.component";
+import { MenuSiderService } from '../../../../core/service/menu-sider.service';
 
 @Component({
   selector: 'app-header',
@@ -21,4 +22,10 @@ import { ToggleAvatarComponent } from "../toggle-avatar/toggle-avatar.component"
 })
 export class HeaderComponent {
   currentUser: User | null = null;
+
+  constructor(private menuSiderService: MenuSiderService) {}
+
+  toggleMenuSider(): void {
+    this.menuSiderService.toggle();
+  }
 }

@@ -50,7 +50,7 @@ body {
     }
 
     .menu__bar .active__menu__bar{
-      @apply text-violet-800 animate-zoom3d
+      @apply text-violet-800 dark:text-greenDark animate-zoom3d
     }
 
     .custom-otp .p-inputotp {

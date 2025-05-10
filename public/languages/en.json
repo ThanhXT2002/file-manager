@@ -39,7 +39,7 @@
   },
 
   "auth": {
-    "unknown": "An unknown error occurred",
+    "unknown_error": "An unknown error occurred",
     "Invalid-status": "An error occurred. Please try again later.",
     "login": "Login",
     "login-success": "Login successfully",

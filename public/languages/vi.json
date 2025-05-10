@@ -39,7 +39,7 @@
     "zh": "Tiếng Trung"
   },
   "auth": {
-    "unknown": "Đã xảy ra lỗi không xác định",
+    "unknown_error": "Đã xảy ra lỗi không xác định",
     "Invalid-status": "Đã có lỗi xảy ra. Vui lòng thử lại sau.",
     "login": "Đăng nhập",
     "login-success": "Đăng nhập thành công",

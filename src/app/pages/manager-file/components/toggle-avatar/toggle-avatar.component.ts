@@ -47,8 +47,7 @@ class ItemMenu {
     FileUpload,
     FloatLabelModule,
     FormsModule,
-    ReactiveFormsModule,
-    NoCachePipe,
+    ReactiveFormsModule
   ],
   templateUrl: './toggle-avatar.component.html',
   styleUrl: './toggle-avatar.component.scss',

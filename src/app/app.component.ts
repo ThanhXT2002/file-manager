@@ -4,10 +4,10 @@ import { filter, map, Subject, Subscription, takeUntil, tap } from 'rxjs';
 import { GlobalService } from './core/service/global.service';
 import { Title } from '@angular/platform-browser';
 import { TitleService } from './core/service/title.service';
-import { ErrorIndicatorComponent } from "./core/components/error-indicator/error-indicator.component";
-import { LoadingComponent } from "./core/components/loading/loading.component";
+import { ErrorIndicatorComponent } from "./pages/components/error-indicator/error-indicator.component";
+import { LoadingComponent } from "./pages/components/loading/loading.component";
 import { CommonModule } from '@angular/common';
-import { GlobalToastComponent } from "./core/components/global-toast/global-toast.component";
+import { GlobalToastComponent } from "./pages/components/global-toast/global-toast.component";
 import { LanguageService } from './core/service/language.service';
 import { AuthService } from './core/service/auth.service';
 

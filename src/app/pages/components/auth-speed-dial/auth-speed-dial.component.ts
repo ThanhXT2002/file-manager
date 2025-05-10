@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MenuItem, MessageService } from 'primeng/api';
 import { Subscription } from 'rxjs';
-import { LanguageService } from '../../service/language.service';
+import { LanguageService } from '../../../core/service/language.service';
 import { SpeedDial } from 'primeng/speeddial';
 import { CommonModule } from '@angular/common';
 import { ToastModule } from 'primeng/toast';

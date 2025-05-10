@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { utilHelper } from '../helpers/util';
 import { HttpHeaders } from '@angular/common/http';
-import { EErrorIndicatorType } from '../components/error-indicator/error-indicator.component';
+import { EErrorIndicatorType } from '../../pages/components/error-indicator/error-indicator.component';
 
 
 @Injectable({

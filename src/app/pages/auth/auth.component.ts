@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { GlobalService } from '../../core/service/global.service';
-import { AuthSpeedDialComponent } from "../../core/components/auth-speed-dial/auth-speed-dial.component";
+import { AuthSpeedDialComponent } from "../components/auth-speed-dial/auth-speed-dial.component";
 
 @Component({
   selector: 'app-auth',

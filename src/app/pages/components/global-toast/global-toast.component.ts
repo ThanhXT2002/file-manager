@@ -5,7 +5,7 @@ import { ButtonModule } from 'primeng/button';
 import { Ripple } from 'primeng/ripple';
 import { AvatarModule } from 'primeng/avatar';
 import { CommonModule } from '@angular/common';
-import { CustomToastService } from '../../service/custom-toast.service';
+import { CustomToastService } from '../../../core/service/custom-toast.service';
 import { TranslateModule } from '@ngx-translate/core';
 
 

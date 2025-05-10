@@ -5,7 +5,7 @@ import { ButtonModule } from 'primeng/button';
 import { Ripple } from 'primeng/ripple';
 import { AvatarModule } from 'primeng/avatar';
 import { StyleClass } from 'primeng/styleclass';
-import { LogoComponent } from "../../../../core/components/logo/logo.component";
+import { LogoComponent } from "../../../components/logo/logo.component";
 
 @Component({
   selector: 'app-drawer',

@@ -38,6 +38,7 @@
     "zh": "中文"
   },
   "auth": {
+    "unknown": "发生未知错误",
     "Invalid-status": "发生错误。请稍后再试。",
     "login": "登录",
     "login-success": "登录成功",

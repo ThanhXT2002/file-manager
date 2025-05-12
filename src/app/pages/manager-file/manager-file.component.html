@@ -2,26 +2,25 @@
   <div class="sticky top-0 flex-none h-header w-full">
     <app-header></app-header>
   </div>
-  <div
-    class="grow h-full overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400"
-  >
-    <div class="w-full h-full flex flex-row">
-       <div
-        class="hidden md:block overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 border-r-2 border-primary transition-all duration-300 ease-in-out"
-        [ngClass]="{
-          'w-[280px] ': isMenuVisible$ | async,
-          'w-[50px] overflow-hidden': !(isMenuVisible$ | async)
-        }"
-      >
-       <app-menu-sider [ngClass]="{'opacity-0': !(isMenuVisible$ | async), 'opacity-100': isMenuVisible$ | async}"
-                       class="transition-opacity duration-300 ease-in-out"></app-menu-sider>
-      </div>
+<div class="grow h-full overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400">
+  <div class="w-full h-full flex flex-row">
+    <div
+      class="hidden md:block no-scrollbar border-r-2 border-primary transition-all duration-300 ease-in-out"
+      [ngClass]="{
+        'w-[280px] overflow-y-auto': isMenuVisible$ | async,
+        'w-[50px] overflow-hidden': !(isMenuVisible$ | async)
+      }"
+    >
+      <app-menu-sider
+        class="transition-opacity duration-300 ease-in-out">
+      </app-menu-sider>
+    </div>
 
-      <div class="p-3 transition-all duration-300 ease-in-out">
-        <router-outlet></router-outlet>
-      </div>
+    <div class="p-3 transition-all duration-300 ease-in-out flex-1">
+      <router-outlet></router-outlet>
     </div>
   </div>
+</div>
   <div class="flex-none md:hidden h-footer w-full"></div>
   <div class="fixed bottom-0 md:hidden h-footer w-full">
     <app-footer></app-footer>

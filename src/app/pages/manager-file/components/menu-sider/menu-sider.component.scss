@@ -1,0 +1,74 @@
+.menu-icon {
+  transition: transform 0.3s ease;
+}
+
+.menu-icon.expanded {
+  transform: rotate(180deg);
+}
+
+/* Animation cho submenu */
+.submenu {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0, 1, 0, 1);
+}
+
+.submenu.expanded {
+  max-height: 1000px;
+  transition: max-height 0.6s ease-in-out;
+}
+
+/* Hiệu ứng pulse khi menu đang mở */
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s infinite;
+}
+
+/* Optional: Hiệu ứng cho item menu khi đang active */
+.menu-item-active {
+  background-color: rgba(var(--primary-rgb), 0.1);
+  border-left: 3px solid var(--primary-color);
+}
+
+/* Optional: Hiệu ứng hover */
+.menu-item:hover {
+  transform: translateX(2px);
+  transition: transform 0.2s ease;
+}
+
+/* Menu item khi thu gọn */
+.menu-item.collapsed {
+  justify-content: center !important;
+  padding: 0.75rem 0;
+}
+
+/* Điều chỉnh vị trí badge khi thu gọn */
+.badge-collapsed {
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform: translate(25%, -25%);
+}
+
+/* Thêm hiệu ứng transition cho tất cả các phần tử */
+.menu-item,
+.menu-item i,
+.menu-item span {
+  transition: all 0.3s ease-in-out;
+}
+
+/* Đảm bảo vị trí tương đối cho badge */
+.menu-item {
+  position: relative;
+}

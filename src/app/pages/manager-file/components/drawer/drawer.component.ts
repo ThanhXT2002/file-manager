@@ -4,7 +4,6 @@ import { Drawer, DrawerModule } from 'primeng/drawer';
 import { ButtonModule } from 'primeng/button';
 import { Ripple } from 'primeng/ripple';
 import { AvatarModule } from 'primeng/avatar';
-import { StyleClass } from 'primeng/styleclass';
 import { LogoComponent } from "../../../components/logo/logo.component";
 import { ToggleAvatarComponent } from "../toggle-avatar/toggle-avatar.component";
 import { MenuSiderComponent } from "../menu-sider/menu-sider.component";
@@ -17,7 +16,6 @@ import { MenuSiderComponent } from "../menu-sider/menu-sider.component";
     ButtonModule,
     Ripple,
     AvatarModule,
-    StyleClass,
     LogoComponent,
     ToggleAvatarComponent,
     MenuSiderComponent

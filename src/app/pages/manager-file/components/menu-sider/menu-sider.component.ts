@@ -1,3 +1,4 @@
+import { AuthService } from './../../../../core/service/auth.service';
 import { Component, OnInit } from '@angular/core';
 import { Ripple } from 'primeng/ripple';
 import { CommonModule } from '@angular/common';
@@ -5,6 +6,9 @@ import { MenuItem } from '../../../../core/interfaces/menu-item.interface';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { MenuSiderService } from '../../../../core/service/menu-sider.service';
+import { GlobalService } from '../../../../core/service/global.service';
+import { CustomToastService } from '../../../../core/service/custom-toast.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-menu-sider',
@@ -19,7 +23,11 @@ export class MenuSiderComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private menuSiderService: MenuSiderService
+    private menuSiderService: MenuSiderService,
+    private authService: AuthService,
+    private globalService: GlobalService,
+    private toastService: CustomToastService,
+        private translateService: TranslateService,
   ) {
     this.isMenuVisible$ = this.menuSiderService.isVisible$;
   }
@@ -32,18 +40,7 @@ export class MenuSiderComponent implements OnInit {
     this.menuItems = [
       {
         label: 'Dashboard',
-        icon: 'pi pi-home',
-        route: '/dashboard',
-        action: () => this.handleDashboard(),
-      },
-      {
-        label: 'Bookmarks',
-        icon: 'pi pi-bookmark',
-        action: () => this.handleBookmarks(),
-      },
-      {
-        label: 'Reports',
-        icon: 'pi pi-chart-line',
+        icon: 'pi pi-microsoft',
         children: [
           {
             label: 'Revenue',
@@ -69,8 +66,29 @@ export class MenuSiderComponent implements OnInit {
         ],
       },
       {
-        label: 'Team',
-        icon: 'pi pi-users',
+        label: 'My Files',
+        icon: 'pi pi-file',
+        route: '/dashboard',
+        action: () => this.handleDashboard(),
+      },
+      {
+        label: 'Starred',
+        icon: 'pi pi-star',
+        action: () => this.handleBookmarks(),
+      },
+      {
+        label: 'Recent',
+        icon: 'pi pi-clock',
+        action: () => this.handleTeam(),
+      },
+      {
+        label: 'Shared with me',
+        icon: 'pi pi-share-alt',
+        action: () => this.handleTeam(),
+      },
+      {
+        label: 'Trash',
+        icon: 'pi pi-trash',
         action: () => this.handleTeam(),
       },
       {
@@ -80,14 +98,44 @@ export class MenuSiderComponent implements OnInit {
         action: () => this.handleMessages(),
       },
       {
-        label: 'Calendar',
-        icon: 'pi pi-calendar',
+        label: 'Projects',
+        icon: 'pi pi-folder',
+        action: () => this.handleCalendar(),
+      },
+      {
+        label: 'documents',
+        icon: 'pi pi-folder',
+        action: () => this.handleCalendar(),
+      },
+      {
+        label: 'Iamges',
+        icon: 'pi pi-folder',
+        action: () => this.handleCalendar(),
+      },
+      {
+        label: 'Downloads',
+        icon: 'pi pi-folder',
+        action: () => this.handleCalendar(),
+      },
+      {
+        label: 'Uploads Files',
+        icon: 'pi pi-file-arrow-up',
+        action: () => this.handleCalendar(),
+      },
+      {
+        label: 'New Folder',
+        icon: 'pi pi-folder-plus',
         action: () => this.handleCalendar(),
       },
       {
         label: 'Settings',
         icon: 'pi pi-cog',
         action: () => this.handleSettings(),
+      },
+      {
+        label: 'Logout',
+        icon: 'pi pi-sign-out',
+        action: () => this.logout(),
       },
     ];
   }
@@ -165,5 +213,26 @@ export class MenuSiderComponent implements OnInit {
   isActive(item: MenuItem): boolean {
     // Kiểm tra nếu route hiện tại khớp với route của item
     return this.router.url === item.route;
+  }
+
+  logout() {
+    this.globalService.openLoading();
+    this.authService.logout().subscribe({
+      next: () => {
+        this.toastService.showToast('success', {
+          detail: this.translateService.instant('profile.logout-success'),
+          sticky: true,
+          life: 5000,
+        });
+        this.router.navigate(['/auth/login']);
+      },
+      error: (err) => {
+        this.toastService.showToast('error', {
+          detail: this.translateService.instant('profile.logout-failed'),
+          sticky: true,
+          life: 5000,
+        });
+      },
+    });
   }
 }

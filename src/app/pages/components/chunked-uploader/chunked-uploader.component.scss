@@ -1,0 +1,119 @@
+/* chunked-uploader.component.scss */
+.chunked-uploader {
+  width: 100%;
+
+  .uploader-input {
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    padding: 30px;
+    text-align: center;
+    margin-bottom: 20px;
+
+    .upload-btn {
+      background-color: #007bff;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      display: inline-block;
+
+      &:hover {
+        background-color: #0069d9;
+      }
+    }
+
+    .helper-text {
+      margin-top: 10px;
+      color: #777;
+    }
+  }
+
+  .upload-list {
+    .upload-item {
+      border: 1px solid #eee;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 10px;
+
+      .file-info {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+
+        .file-name {
+          font-weight: bold;
+          flex: 1;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .file-size {
+          color: #777;
+          margin-left: 10px;
+        }
+      }
+
+      .progress-container {
+        margin-bottom: 10px;
+
+        .progress-bar {
+          height: 10px;
+          background-color: #f0f0f0;
+          border-radius: 5px;
+          overflow: hidden;
+          margin-bottom: 5px;
+
+          .progress-fill {
+            height: 100%;
+            background-color: #007bff;
+            transition: width 0.3s ease;
+          }
+        }
+
+        .progress-text {
+          font-size: 0.85em;
+          color: #777;
+        }
+      }
+
+      .actions {
+        display: flex;
+        gap: 10px;
+
+        button {
+          border: none;
+          border-radius: 4px;
+          padding: 5px 10px;
+          cursor: pointer;
+
+          &.btn-pause {
+            background-color: #f8f9fa;
+            color: #495057;
+          }
+
+          &.btn-resume {
+            background-color: #28a745;
+            color: white;
+          }
+
+          &.btn-cancel {
+            background-color: #dc3545;
+            color: white;
+          }
+        }
+
+        .upload-complete {
+          color: #28a745;
+          font-weight: bold;
+        }
+      }
+
+      .error-message {
+        margin-top: 10px;
+        color: #dc3545;
+        font-size: 0.85em;
+      }
+    }
+  }
+}

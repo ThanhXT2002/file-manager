@@ -1,0 +1,53 @@
+<div class="chunked-uploader">
+  <div class="uploader-input">
+    <label for="file-input" class="upload-btn">
+      <span>Chọn file</span>
+      <input
+        type="file"
+        id="file-input"
+        (change)="onFilesSelected($event)"
+        multiple
+        style="display: none;">
+    </label>
+    <p class="helper-text">Hoặc kéo và thả file vào đây</p>
+  </div>
+
+  <div class="upload-list" *ngIf="activeUploads.length > 0">
+    <div class="upload-item" *ngFor="let upload of activeUploads">
+      <div class="file-info">
+        <div class="file-name">{{ upload.fileName }}</div>
+        <div class="file-size">{{ formatSize(upload.totalSize) }}</div>
+      </div>
+
+      <div class="progress-container">
+        <div class="progress-bar">
+          <div class="progress-fill" [style.width.%]="upload.progress"></div>
+        </div>
+        <div class="progress-text">
+          {{ upload.progress }}% • {{ formatSize(upload.uploadedSize) }}/{{ formatSize(upload.totalSize) }}
+          <span *ngIf="upload.speed"> • {{ formatSpeed(upload.speed) }}</span>
+          <span *ngIf="upload.remainingTime"> • {{ formatTime(upload.remainingTime) }} còn lại</span>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button *ngIf="upload.status === 'uploading'" (click)="pauseUpload(upload.uploadId)" class="btn-pause">
+          Tạm dừng
+        </button>
+        <button *ngIf="upload.status === 'paused'" (click)="resumeUpload(upload.uploadId)" class="btn-resume">
+          Tiếp tục
+        </button>
+        <button *ngIf="upload.status !== 'completed'" (click)="cancelUpload(upload.uploadId)" class="btn-cancel">
+          Hủy
+        </button>
+        <div *ngIf="upload.status === 'completed'" class="upload-complete">
+          Hoàn thành
+        </div>
+      </div>
+
+      <div class="error-message" *ngIf="upload.status === 'error'">
+        {{ upload.message }}
+      </div>
+    </div>
+  </div>
+</div>

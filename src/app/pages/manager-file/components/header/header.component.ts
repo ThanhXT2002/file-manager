@@ -7,6 +7,7 @@ import { User } from '../../../../core/interfaces/user.interface';
 import { ToggleNotifiComponent } from "../toggle-notifi/toggle-notifi.component";
 import { ToggleAvatarComponent } from "../toggle-avatar/toggle-avatar.component";
 import { MenuSiderService } from '../../../../core/service/menu-sider.service';
+import { SearchComponent } from "../search/search.component";
 
 @Component({
   selector: 'app-header',
@@ -15,7 +16,8 @@ import { MenuSiderService } from '../../../../core/service/menu-sider.service';
     LogoComponent,
     ToggleDarkModeComponent,
     ToggleNotifiComponent,
-    ToggleAvatarComponent
+    ToggleAvatarComponent,
+    SearchComponent
 ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',

@@ -1,0 +1,18 @@
+<div class="p-2">
+  <h3 class="text-lg font-semibold mb-3">Thư mục</h3>
+
+  <div class="tree-container">
+    <p-tree
+      [value]="folders"
+      selectionMode="single"
+      (onNodeSelect)="onNodeSelect($event)"
+      [loading]="loading"
+      styleClass="w-full"
+    ></p-tree>
+
+    <div *ngIf="folders.length === 0 && !loading" class="text-center p-4 text-gray-500">
+      <i class="pi pi-folder text-3xl mb-2"></i>
+      <p>Không có thư mục nào</p>
+    </div>
+  </div>
+</div>

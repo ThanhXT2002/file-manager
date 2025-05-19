@@ -14,7 +14,7 @@ export const nonAuthGuard: CanActivateFn = (route, state) => {
     map((user) => {
       // Nếu đã đăng nhập, chuyển hướng về trang chủ
       if (user) {
-        router.navigate(['/manager-file/home']);
+        router.navigate(['/manager-file/my-files']);
         return false;
       }
 

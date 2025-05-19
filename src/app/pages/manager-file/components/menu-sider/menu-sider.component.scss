@@ -37,8 +37,7 @@
 
 /* Optional: Hiệu ứng cho item menu khi đang active */
 .menu-item-active {
-  background-color: rgba(var(--primary-rgb), 0.1);
-  border-left: 3px solid var(--primary-color);
+  @apply border-l-4  border-violet-800 dark:border-greenDark text-primary bg-gray-100 dark:bg-gray-800;
 }
 
 /* Optional: Hiệu ứng hover */

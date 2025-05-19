@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Ripple } from 'primeng/ripple';
 import { CommonModule } from '@angular/common';
 import { MenuItem } from '../../../../core/interfaces/menu-item.interface';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { Observable } from 'rxjs';
 import { MenuSiderService } from '../../../../core/service/menu-sider.service';
 import { GlobalService } from '../../../../core/service/global.service';
@@ -12,7 +12,7 @@ import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-menu-sider',
-  imports: [Ripple, CommonModule],
+  imports: [Ripple, CommonModule, RouterModule],
   templateUrl: './menu-sider.component.html',
   styleUrl: './menu-sider.component.scss',
 })
@@ -27,7 +27,7 @@ export class MenuSiderComponent implements OnInit {
     private authService: AuthService,
     private globalService: GlobalService,
     private toastService: CustomToastService,
-        private translateService: TranslateService,
+    private translateService: TranslateService,
   ) {
     this.isMenuVisible$ = this.menuSiderService.isVisible$;
   }
@@ -39,28 +39,22 @@ export class MenuSiderComponent implements OnInit {
   private initMenuItems(): void {
     this.menuItems = [
       {
-        label: 'Dashboard',
-        icon: 'pi pi-microsoft',
+        label: 'New',
+        icon: 'pi pi-plus',
         children: [
           {
-            label: 'Revenue',
-            icon: 'pi pi-chart-line',
-            children: [
-              {
-                label: 'View',
-                icon: 'pi pi-table',
-                action: () => this.handleRevenueView(),
-              },
-              {
-                label: 'Search',
-                icon: 'pi pi-search',
-                action: () => this.handleRevenueSearch(),
-              },
-            ],
+            label: 'Upload File',
+            icon: 'pi pi-file-arrow-up',
+            action: () => this.handleExpenses(),
           },
           {
-            label: 'Expenses',
-            icon: 'pi pi-chart-line',
+            label: 'New Folder',
+            icon: 'pi pi-folder-plus',
+            action: () => this.handleExpenses(),
+          },
+          {
+            label: 'Upload Folder',
+            icon: 'pi pi-folder-open',
             action: () => this.handleExpenses(),
           },
         ],
@@ -68,27 +62,31 @@ export class MenuSiderComponent implements OnInit {
       {
         label: 'My Files',
         icon: 'pi pi-file',
-        route: '/dashboard',
+        route: '/manager-file/my-files',
         action: () => this.handleDashboard(),
       },
       {
         label: 'Starred',
         icon: 'pi pi-star',
+        route: '/starred',
         action: () => this.handleBookmarks(),
       },
       {
         label: 'Recent',
         icon: 'pi pi-clock',
+        route: '/manager-file/recent',
         action: () => this.handleTeam(),
       },
       {
         label: 'Shared with me',
         icon: 'pi pi-share-alt',
+        route: '/manager-file/shared-with-me',
         action: () => this.handleTeam(),
       },
       {
         label: 'Trash',
         icon: 'pi pi-trash',
+        route: '/manager-file/trash',
         action: () => this.handleTeam(),
       },
       {
@@ -132,6 +130,34 @@ export class MenuSiderComponent implements OnInit {
         icon: 'pi pi-cog',
         action: () => this.handleSettings(),
       },
+
+      // {
+      //   label: 'Dashboard',
+      //   icon: 'pi pi-microsoft',
+      //   children: [
+      //     {
+      //       label: 'Revenue',
+      //       icon: 'pi pi-chart-line',
+      //       children: [
+      //         {
+      //           label: 'View',
+      //           icon: 'pi pi-table',
+      //           action: () => this.handleRevenueView(),
+      //         },
+      //         {
+      //           label: 'Search',
+      //           icon: 'pi pi-search',
+      //           action: () => this.handleRevenueSearch(),
+      //         },
+      //       ],
+      //     },
+      //     {
+      //       label: 'Expenses',
+      //       icon: 'pi pi-chart-line',
+      //       action: () => this.handleExpenses(),
+      //     },
+      //   ],
+      // },
       {
         label: 'Logout',
         icon: 'pi pi-sign-out',

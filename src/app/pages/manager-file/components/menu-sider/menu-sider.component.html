@@ -3,14 +3,16 @@
     @for (item of items; track item.label) {
       <li>
         <a
+        routerLink="{{ item.route }}"
+        [routerLinkActive]="item.route ? 'menu-item-active' : ''"
           pRipple
           [ngClass]="{
             'menu-item flex items-center cursor-pointer rounded-border text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors p-ripple': true,
-            'menu-item-active': isExpanded(item),
+     
             'justify-center py-3 px-2': !(isMenuVisible$ | async),
             'p-4': isMenuVisible$ | async
           }"
-          (click)="handleItemClick(item)"
+          (click)="item.route ? null : handleItemClick(item)"
           [title]="item.label"
         >
           <i [class]="item.icon"

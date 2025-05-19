@@ -62,7 +62,7 @@ export class LoginWithPasswordComponent extends BasicPage {
       this.authService.loginByPassword(this.loginForm.value).subscribe({
         next: () => {
           this.responseHandler.handleSuccess('auth.login-success', () => {
-            this.router.navigate(['/manager-file/home']);
+            this.router.navigate(['/manager-file/my-files']);
           });
         },
         error: (error) => {

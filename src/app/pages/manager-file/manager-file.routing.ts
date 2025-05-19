@@ -8,9 +8,9 @@ import { NotificationComponent } from './notification/notification.component';
 import { authGuard } from '../../core/guards/auth.guard';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  { path: '', redirectTo: 'my-files', pathMatch: 'full' },
   {
-    path: 'home',
+    path: 'my-files',
     component: HomeComponent,
   },
   {
@@ -25,6 +25,20 @@ const routes: Routes = [
     path: 'notification',
     component: NotificationComponent,
   },
+  {
+    path: 'files/:folderId',
+    component: HomeComponent
+  },
+  {
+    path: 'trash',
+    component: HomeComponent,
+    data: { mode: 'trash' }
+  },
+  {
+    path: 'favorites',
+    component: HomeComponent,
+    data: { mode: 'favorites' }
+  }
 ];
 @NgModule({
   declarations: [],

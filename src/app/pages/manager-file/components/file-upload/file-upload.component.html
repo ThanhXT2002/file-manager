@@ -1,0 +1,33 @@
+<div class="p-4">
+  <p-fileUpload
+    #fileUpload
+    name="file"
+    [customUpload]="true"
+    (uploadHandler)="upload()"
+    (onSelect)="selectFiles($event)"
+    [auto]="true"
+    chooseLabel="Chọn tệp tin"
+    uploadLabel="Tải lên"
+    cancelLabel="Hủy"
+    [showUploadButton]="false"
+    [showCancelButton]="false"
+    accept="image/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/plain,application/zip,application/x-rar-compressed"
+    [maxFileSize]="10000000"
+    [disabled]="uploading"
+  >
+    <ng-template pTemplate="content">
+      <div *ngIf="uploading">
+        <div class="mb-2">Đang tải lên: {{ currentFile?.name }}</div>
+        <p-progressBar [value]="progress"></p-progressBar>
+      </div>
+
+      <div *ngIf="message" class="mt-3">
+        <p-message [severity]="progress === 100 ? 'success' : 'error'" [text]="message"></p-message>
+      </div>
+    </ng-template>
+  </p-fileUpload>
+
+  <div class="flex justify-end mt-4">
+    <button pButton type="button" label="Đóng" class="p-button-text" (click)="cancelUpload()"></button>
+  </div>
+</div>

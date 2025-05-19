@@ -20,6 +20,7 @@ import { FileType } from '../../../core/enum/file.enum';
 import { FileService } from '../../../core/service/file.service';
 import { FileUploadComponent } from '../components/file-upload/file-upload.component';
 import { FileBrowserComponent } from '../components/file-browser/file-browser.component';
+import { EncryptionService } from '../../../core/service/encryption.service';
 
 @Component({
   selector: 'app-home',
@@ -76,24 +77,33 @@ export class HomeComponent extends BasicPage {
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private encryptionService: EncryptionService
   ) {
     super(globalSer);
   }
 
   ngOnInit() {
-    // Lấy folderId từ route parameters
-    this.route.paramMap.subscribe((params) => {
-      const folderId = params.get('folderId');
-      if (folderId) {
-        this.currentFolder = +folderId; // Chuyển string sang number
+    // Lấy encrypted folderId từ route parameters và giải mã
+  this.route.paramMap.subscribe(params => {
+    const encryptedId = params.get('encryptedId');
+    if (encryptedId) {
+      const folderId = this.encryptionService.decryptId(encryptedId);
+      if (folderId !== null) {
+        this.currentFolder = folderId;
       } else {
-        this.currentFolder = undefined; // Root folder
+        // ID không hợp lệ, chuyển về root
+        this.router.navigate(['/manager-file/files']);
+        return;
       }
+    } else {
+      this.currentFolder = undefined; // Root folder
+    }
 
-      this.loadFiles();
-      this.setBreadcrumb();
-    });
+    this.loadFiles();
+    this.setBreadcrumb();
+  });
+
     this.createDelayObservable().subscribe((value) => {
       this.pageLoaded();
     });
@@ -180,12 +190,14 @@ export class HomeComponent extends BasicPage {
   }
 
   navigateToFolder(folderId?: number): void {
-    if (folderId) {
-      this.router.navigate(['/manager-file/files', folderId]);
-    } else {
-      this.router.navigate(['/manager-file/files']);
-    }
+  if (folderId) {
+    const encryptedId = this.encryptionService.encryptId(folderId);
+    console.log(encryptedId)
+    this.router.navigate(['/manager-file/files', encryptedId]);
+  } else {
+    this.router.navigate(['/manager-file/files']);
   }
+}
 
   openCreateFolderDialog(): void {
     this.newFolderName = '';

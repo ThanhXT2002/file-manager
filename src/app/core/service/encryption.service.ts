@@ -6,7 +6,7 @@ import { environment } from '../../../environments/environment';
   providedIn: 'root'
 })
 export class EncryptionService {
-  private secretKey = "environment.encryptionKey" ;
+  private secretKey = environment.encryptionKey ;
 
   // Mã hóa ID thành chuỗi an toàn cho URL
   encryptId(id: number): string {

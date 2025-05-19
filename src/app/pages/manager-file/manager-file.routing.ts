@@ -26,7 +26,7 @@ const routes: Routes = [
     component: NotificationComponent,
   },
   {
-    path: 'files/:folderId',
+    path: 'files/:encryptedId',
     component: HomeComponent
   },
   {

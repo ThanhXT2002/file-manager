@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 
-import { MessageService, ConfirmationService } from 'primeng/api';
+import { MessageService, ConfirmationService, MenuItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { DialogModule } from 'primeng/dialog';
@@ -21,6 +21,8 @@ import { FileService } from '../../../core/service/file.service';
 import { FileUploadComponent } from '../components/file-upload/file-upload.component';
 import { FileBrowserComponent } from '../components/file-browser/file-browser.component';
 import { EncryptionService } from '../../../core/service/encryption.service';
+import { FolderPathService } from '../../../core/service/folder-path.service';
+import { BreadcrumbService } from '../../../core/service/breadcrumb.service';
 
 @Component({
   selector: 'app-home',
@@ -78,36 +80,96 @@ export class HomeComponent extends BasicPage {
     private confirmationService: ConfirmationService,
     private router: Router,
     private route: ActivatedRoute,
-    private encryptionService: EncryptionService
+    private encryptionService: EncryptionService,
+    private breadcrumbService: BreadcrumbService,
+    private folderPathService: FolderPathService
   ) {
     super(globalSer);
   }
 
   ngOnInit() {
-    // Lấy encrypted folderId từ route parameters và giải mã
-    this.route.paramMap.subscribe((params) => {
-      const encryptedId = params.get('encryptedId');
+  // Kết hợp cả thông tin từ paramMap và data của route
+  this.route.params.subscribe(params => {
+    this.route.data.subscribe(data => {
+      // Xử lý mode đặc biệt trước (trash, favorites, etc.)
+      if (data['mode']) {
+        if (data['mode'] === 'trash') {
+          this.breadcrumbService.updateBreadcrumbs([
+            { label: 'My files', routerLink: '/manager-file/my-files' },
+            { label: 'Thùng rác', routerLink: '/manager-file/trash' },
+          ]);
+          // Có thể thực hiện các xử lý khác dành riêng cho chế độ trash
+          this.loadTrashFiles();
+          return;
+        } else if (data['mode'] === 'favorites') {
+          this.breadcrumbService.updateBreadcrumbs([
+            { label: 'My files', routerLink: '/manager-file/my-files' },
+            { label: 'Yêu thích', routerLink: '/manager-file/favorites' },
+          ]);
+          // Có thể thực hiện các xử lý khác dành riêng cho chế độ favorites
+          this.loadFavoriteFiles();
+          return;
+        }
+      }
+
+      // Trường hợp thông thường: xử lý theo folder ID
+      const encryptedId = params['encryptedId'];
       if (encryptedId) {
         const folderId = this.encryptionService.decryptId(encryptedId);
         if (folderId !== null) {
           this.currentFolder = folderId;
+          // Lấy đường dẫn thư mục đầy đủ và cập nhật breadcrumb
+          this.updateBreadcrumbForFolder(folderId);
+          this.loadFiles(); // Tải danh sách files trong thư mục
         } else {
           // ID không hợp lệ, chuyển về root
-          this.router.navigate(['/manager-file/files']);
-          return;
+          this.router.navigate(['/manager-file/my-files']);
+          this.breadcrumbService.reset();
         }
       } else {
-        this.currentFolder = undefined; // Root folder
+        // Trường hợp root folder
+        this.currentFolder = undefined;
+        this.breadcrumbService.reset(); // Reset breadcrumb về "My Files"
+        this.loadFiles(); // Tải danh sách files gốc
       }
-
-      this.loadFiles();
-      this.setBreadcrumb();
     });
+  });
 
-    this.createDelayObservable().subscribe((value) => {
-      this.pageLoaded();
+  this.createDelayObservable().subscribe(() => {
+    this.pageLoaded();
+  });
+}
+
+// Các phương thức để tải dữ liệu theo các mode khác nhau
+loadTrashFiles() {
+  this.loading = true;
+  this.fileService.getDeletedFiles(this.currentPage, this.pageSize)
+    .subscribe({
+      next: (response) => {
+        this.fileList = response.data?.items || [];
+        this.totalRecords = response.data?.totalCount || 0;
+        this.loading = false;
+      },
+      error: (error) => {
+        this.handleError(error);
+      }
     });
-  }
+}
+
+loadFavoriteFiles() {
+  this.loading = true;
+  this.fileService.getFavoriteFiles(this.currentPage, this.pageSize)
+    .subscribe({
+      next: (response) => {
+        this.fileList = response.data?.items || [];
+        this.totalRecords = response.data?.totalCount || 0;
+        this.loading = false;
+      },
+      error: (error) => {
+        this.handleError(error);
+      }
+    });
+}
 
   loadFiles(): void {
     this.loading = true;
@@ -186,7 +248,7 @@ export class HomeComponent extends BasicPage {
 
   setBreadcrumb(): void {
     // Logic để thiết lập breadcrumb dựa vào thư mục hiện tại
-    this.breadcrumbItems = [{ name: 'Trang chủ', id: undefined }];
+    this.breadcrumbItems = [{ name: 'My Files', id: undefined }];
 
     if (this.currentFolder) {
       // Cần lấy thông tin đường dẫn thư mục từ API
@@ -198,13 +260,34 @@ export class HomeComponent extends BasicPage {
     }
   }
 
+
+  updateBreadcrumbForFolder(folderId: number): void {
+  this.folderPathService.buildFolderPath(folderId).subscribe(
+    folderPath => {
+      const breadcrumbItems: MenuItem[] = [
+        { label: 'My Files', routerLink: '/manager-file/my-files' }
+      ];
+
+      folderPath.forEach(folder => {
+        breadcrumbItems.push({
+          label: folder.name,
+          routerLink: folder.routerLink
+        });
+      });
+
+      this.breadcrumbService.updateBreadcrumbs(breadcrumbItems);
+    }
+  );
+}
+
   navigateToFolder(folderId?: number): void {
     if (folderId) {
       const encryptedId = this.encryptionService.encryptId(folderId);
-      console.log(encryptedId);
       this.router.navigate(['/manager-file/files', encryptedId]);
+      // Breadcrumb sẽ được cập nhật trong ngOnInit khi route thay đổi
     } else {
-      this.router.navigate(['/manager-file/files']);
+      this.router.navigate(['/manager-file/my-files']);
+      this.breadcrumbService.reset();
     }
   }
 

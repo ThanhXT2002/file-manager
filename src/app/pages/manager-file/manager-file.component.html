@@ -7,7 +7,7 @@
     <div
       class="hidden md:block no-scrollbar border-r-2 border-primary transition-all duration-300 ease-in-out"
       [ngClass]="{
-        'min-w-[200px] w-[280px] overflow-y-auto': isMenuVisible$ | async,
+        'w-[250px] overflow-y-auto': isMenuVisible$ | async,
         'w-[50px] overflow-hidden': !(isMenuVisible$ | async)
       }"
     >
@@ -16,12 +16,18 @@
       </app-menu-sider>
     </div>
 
-    <div class="transition-all duration-300 ease-in-out flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400">
-       <p-breadcrumb class="max-w-full" [model]="items" />
-       <div class="overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400">
+    <div class="flex-1 flex flex-col h-full overflow-hidden">
+      <!-- Breadcrumb - cố định ở đầu khu vực nội dung -->
+      <div class="flex-none">
+        <p-breadcrumb class="max-w-full" [model]="items" [home]="home"></p-breadcrumb>
+      </div>
+
+      <!-- Nội dung router outlet - có thể cuộn -->
+      <div class="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 p-3">
         <router-outlet></router-outlet>
-       </div>
+      </div>
     </div>
+
   </div>
 </div>
   <div class="flex-none md:hidden h-footer w-full"></div>
@@ -29,3 +35,4 @@
     <app-footer></app-footer>
   </div>
 </div>
+

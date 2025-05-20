@@ -1,27 +1,25 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-
-export interface Breadcrumb {
-  label: string;
-  url: string;
-}
+import { MenuItem } from 'primeng/api';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BreadcrumbService {
-  private breadcrumbsSource = new BehaviorSubject<Breadcrumb[]>([]);
+  private breadcrumbsSource = new BehaviorSubject<MenuItem[]>([
+    { label: 'My Files', routerLink: '/manager-file/my-files' }
+  ]);
   public breadcrumbs$ = this.breadcrumbsSource.asObservable();
 
   constructor() { }
 
-  updateBreadcrumbs(breadcrumbs: Breadcrumb[]): void {
-    setTimeout(() => {
-      this.breadcrumbsSource.next(breadcrumbs);
-    });
+  updateBreadcrumbs(breadcrumbs: MenuItem[]): void {
+    this.breadcrumbsSource.next(breadcrumbs);
   }
 
   reset(): void {
-    this.breadcrumbsSource.next([]);
+    this.breadcrumbsSource.next([
+      { label: 'My Files', routerLink: '/manager-file/my-files' }
+    ]);
   }
 }

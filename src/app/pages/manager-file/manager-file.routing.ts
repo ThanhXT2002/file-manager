@@ -5,7 +5,7 @@ import { HomeComponent } from './home/home.component';
 import { ProfileComponent } from './profile/profile.component';
 import { SettingComponent } from './setting/setting.component';
 import { NotificationComponent } from './notification/notification.component';
-import { authGuard } from '../../core/guards/auth.guard';
+
 
 const routes: Routes = [
   { path: '', redirectTo: 'my-files', pathMatch: 'full' },

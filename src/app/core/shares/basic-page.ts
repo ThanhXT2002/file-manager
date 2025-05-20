@@ -5,7 +5,7 @@ import { HttpErrorResponse } from "@angular/common/http";
 
 
 import { GlobalService } from "../service/global.service";
-import { Breadcrumb, BreadcrumbService } from "../service/breadcrumb.service";
+
 import { EErrorIndicatorType } from "../../pages/components/error-indicator/error-indicator.component";
 import { TranslateService } from "@ngx-translate/core";
 
@@ -18,7 +18,6 @@ export class BasicPage implements OnDestroy {
 
   protected _subscriptions: Subscription[] = [];
 
-  protected breadcrumbService? = Inject(BreadcrumbService);
 
   constructor(protected globalSer: GlobalService) {
     this.openLoading();
@@ -112,15 +111,6 @@ export class BasicPage implements OnDestroy {
     return fakeObservable;
   }
 
-  /**
-   * Cập nhật breadcrumbs"
-   * @param breadcrumbs Mảng breadcrumb mới
-   */
-  protected updateBreadcrumbs(breadcrumbs: Breadcrumb[]): void {
-    if (this.breadcrumbService) {
-      this.breadcrumbService.updateBreadcrumbs(breadcrumbs);
-    }
-  }
 
   toggleDarkMode() {
     const element = document.querySelector('html');

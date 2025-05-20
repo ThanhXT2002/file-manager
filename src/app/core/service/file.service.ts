@@ -217,5 +217,7 @@ export class FileService {
     });
   }
 
-
+  emptyTrash(): Observable<ApiResponse<any>> {
+    return this.http.delete<ApiResponse<any>>(`${this.baseUrl}/trash/empty`);
+  }
 }

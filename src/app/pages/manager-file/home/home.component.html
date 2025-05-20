@@ -1,65 +1,81 @@
+  <div *ngIf="isSearchMode" class="p-3 bg-blue-50 rounded-md">
+    <div class="flex justify-between items-center">
+      <span class="text-blue-600">
+        <i class="pi pi-search mr-2"></i>
+        Kết quả tìm kiếm cho: <strong>"{{ searchTerm }}"</strong>
+      </span>
+      <span class="text-sm text-gray-500">
+        Tìm thấy {{ totalRecords }} kết quả
+      </span>
+    </div>
+  </div>
 <div class="p-4">
-  <div class="flex justify-between items-center mb-4">
 
+  <!-- Header với các nút khác nhau tùy theo mode -->
+  <div class="flex justify-between items-center mb-4">
+    <!-- Title thay đổi theo mode -->
+    <h1 class="text-xl font-semibold">
+      <ng-container *ngIf="currentMode === 'files'">
+        {{ currentFolder ? "Nội dung thư mục" : "Tất cả file" }}
+      </ng-container>
+      <ng-container *ngIf="currentMode === 'trash'"> Thùng rác </ng-container>
+      <ng-container *ngIf="currentMode === 'favorites'">
+        File yêu thích
+      </ng-container>
+    </h1>
+
+
+    <!-- Buttons khác nhau theo mode -->
     <div class="flex gap-2">
-      <button
-        pButton
-        type="button"
-        icon="pi pi-upload"
-        label="Tải lên"
-        class="p-button-primary"
-        (click)="openUploadDialog()">
-      </button>
-      <button
-        pButton
-        type="button"
-        icon="pi pi-folder"
-        label="Tạo thư mục"
-        class="p-button-secondary"
-        (click)="openCreateFolderDialog()">
-      </button>
+      <!-- Chỉ hiển thị nút tải lên và tạo thư mục trong mode files -->
+      <ng-container *ngIf="currentMode === 'files'">
+        <button
+          pButton
+          type="button"
+          icon="pi pi-upload"
+          label="Tải lên"
+          class="p-button-primary"
+          (click)="openUploadDialog()"
+        ></button>
+        <button
+          pButton
+          type="button"
+          icon="pi pi-folder"
+          label="Tạo thư mục"
+          class="p-button-secondary"
+          (click)="openCreateFolderDialog()"
+        ></button>
+      </ng-container>
+
+      <!-- Nút làm trống thùng rác trong mode trash -->
+      <ng-container *ngIf="currentMode === 'trash'">
+        <button
+          pButton
+          type="button"
+          icon="pi pi-trash"
+          label="Làm trống thùng rác"
+          class="p-button-danger"
+          (click)="confirmEmptyTrash()"
+        ></button>
+      </ng-container>
+
+
     </div>
   </div>
 
-  <!-- Breadcrumb -->
-  <!-- <div class="flex items-center mb-4">
-    <nav class="flex" aria-label="Breadcrumb">
-      <ol class="inline-flex items-center space-x-1 md:space-x-3">
-        <li *ngFor="let item of breadcrumbItems; let last = last">
-          <div class="flex items-center">
-            <span *ngIf="!last" class="cursor-pointer text-blue-600 hover:text-blue-800" (click)="navigateToFolder(item.id)">
-              {{ item.name }}
-            </span>
-            <span *ngIf="last" class="text-gray-500">{{ item.name }}</span>
-            <i *ngIf="!last" class="pi pi-chevron-right mx-2 text-gray-400"></i>
-          </div>
-        </li>
-      </ol>
-    </nav>
-  </div> -->
 
-  <!-- Tìm kiếm -->
-  <!-- <div class="p-input-icon-left mb-4 w-full md:w-1/3">
-    <i class="pi pi-search"></i>
-    <input
-      type="text"
-      pInputText
-      [(ngModel)]="searchTerm"
-      (keyup.enter)="searchFiles()"
-      placeholder="Tìm kiếm tệp tin..."
-      class="w-full"
-    />
-  </div> -->
+
 
   <!-- Danh sách tệp tin -->
   <p-table
-     [value]="fileList"
+    [value]="fileList"
     [loading]="loading"
     [paginator]="shouldPaginate"
     [rows]="pageSize"
     [totalRecords]="totalRecords"
-  (onPage)="onPageChange($event)"
-    styleClass="p-datatable-sm">
+    (onPage)="onPageChange($event)"
+    styleClass="p-datatable-sm"
+  >
     <ng-template pTemplate="header">
       <tr>
         <th style="width: 3rem"></th>
@@ -67,47 +83,117 @@
         <th style="width: 10rem">Kích thước</th>
         <th style="width: 10rem">Loại</th>
         <th style="width: 10rem">Ngày sửa đổi</th>
-        <th style="width: 8rem">Thao tác</th>
+        <th style="width: 10rem">Thao tác</th>
+        <!-- Có thể điều chỉnh độ rộng tùy theo số lượng button -->
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-file>
       <tr
-        [ngClass]="{'cursor-pointer hover:bg-gray-50': true}"
-        (dblclick)="openFile(file)">
+        [ngClass]="{ 'cursor-pointer hover:bg-gray-50': true }"
+        (dblclick)="handleDoubleClick(file)"
+      >
         <td>
           <i
-            [ngClass]="file.type === FileType.Folder ? 'pi pi-folder text-yellow-500' : 'pi pi-file text-blue-500'"
-            class="text-xl">
+            [ngClass]="
+              file.type === FileType.Folder
+                ? 'pi pi-folder text-yellow-500'
+                : 'pi pi-file text-blue-500'
+            "
+            class="text-xl"
+          >
           </i>
         </td>
         <td>{{ file.name }}</td>
-        <td>{{ file.type === FileType.Folder ? '-' : file.formattedSize }}</td>
-        <td>{{ file.type === FileType.Folder ? 'Thư mục' : (file.extension || 'Tệp tin') }}</td>
-        <td>{{ file.updatedAt | date:'dd/MM/yyyy HH:mm' }}</td>
+        <td>{{ file.type === FileType.Folder ? "-" : file.formattedSize }}</td>
         <td>
+          {{
+            file.type === FileType.Folder
+              ? "Thư mục"
+              : file.extension || "Tệp tin"
+          }}
+        </td>
+        <td>{{ file.updatedAt | date : "dd/MM/yyyy HH:mm" }}</td>
+        <td>
+          <!-- Các nút thao tác khác nhau tùy theo mode -->
           <div class="flex gap-1">
-            <button
-              pButton
-              type="button"
-              icon="pi pi-pencil"
-              class="p-button-text p-button-rounded p-button-sm"
-              (click)="openRenameDialog(file)">
-            </button>
-            <button
-              pButton
-              type="button"
-              [icon]="file.isFavorite ? 'pi pi-star-fill' : 'pi pi-star'"
-              [ngClass]="file.isFavorite ? 'text-yellow-500' : ''"
-              class="p-button-text p-button-rounded p-button-sm"
-              (click)="toggleFavorite(file, $event)">
-            </button>
-            <button
-              pButton
-              type="button"
-              icon="pi pi-trash"
-              class="p-button-text p-button-rounded p-button-sm p-button-danger"
-              (click)="confirmDelete(file)">
-            </button>
+            <!-- Mode files - đầy đủ thao tác -->
+            <ng-container
+              *ngIf="currentMode === 'files' || currentMode === 'search'"
+            >
+              <button
+                pButton
+                type="button"
+                icon="pi pi-pencil"
+                class="p-button-text p-button-rounded p-button-sm"
+                (click)="openRenameDialog(file)"
+                pTooltip="Đổi tên"
+              ></button>
+              <button
+                pButton
+                type="button"
+                [icon]="file.isFavorite ? 'pi pi-star-fill' : 'pi pi-star'"
+                [ngClass]="file.isFavorite ? 'text-yellow-500' : ''"
+                class="p-button-text p-button-rounded p-button-sm"
+                (click)="toggleFavorite(file, $event)"
+                pTooltip="Yêu thích"
+              ></button>
+              <button
+                pButton
+                type="button"
+                icon="pi pi-trash"
+                class="p-button-text p-button-rounded p-button-sm p-button-danger"
+                (click)="confirmDelete(file)"
+                pTooltip="Xóa"
+              ></button>
+            </ng-container>
+
+            <!-- Mode trash - khôi phục và xóa vĩnh viễn -->
+            <ng-container *ngIf="currentMode === 'trash'">
+              <button
+                pButton
+                type="button"
+                icon="pi pi-replay"
+                class="p-button-text p-button-rounded p-button-sm p-button-success"
+                (click)="restoreFile(file)"
+                pTooltip="Khôi phục"
+              ></button>
+              <button
+                pButton
+                type="button"
+                icon="pi pi-times"
+                class="p-button-text p-button-rounded p-button-sm p-button-danger"
+                (click)="confirmPermanentDelete(file)"
+                pTooltip="Xóa vĩnh viễn"
+              ></button>
+            </ng-container>
+
+            <!-- Mode favorites - bỏ yêu thích và các thao tác thông thường -->
+            <ng-container *ngIf="currentMode === 'favorites'">
+              <button
+                pButton
+                type="button"
+                icon="pi pi-pencil"
+                class="p-button-text p-button-rounded p-button-sm"
+                (click)="openRenameDialog(file)"
+                pTooltip="Đổi tên"
+              ></button>
+              <button
+                pButton
+                type="button"
+                icon="pi pi-star-fill"
+                class="p-button-text p-button-rounded p-button-sm text-yellow-500"
+                (click)="toggleFavorite(file, $event)"
+                pTooltip="Bỏ yêu thích"
+              ></button>
+              <button
+                pButton
+                type="button"
+                icon="pi pi-trash"
+                class="p-button-text p-button-rounded p-button-sm p-button-danger"
+                (click)="confirmDelete(file)"
+                pTooltip="Xóa"
+              ></button>
+            </ng-container>
           </div>
         </td>
       </tr>
@@ -117,7 +203,18 @@
         <td colspan="6" class="text-center p-4">
           <div class="flex flex-col items-center justify-center">
             <i class="pi pi-folder-open text-5xl text-gray-300 mb-2"></i>
-            <span class="text-gray-500">Không có tệp tin nào trong thư mục này</span>
+            <span class="text-gray-500">
+              <!-- Thông báo khác nhau tùy theo mode -->
+              <ng-container *ngIf="currentMode === 'files'">
+                Không có tệp tin nào trong thư mục này
+              </ng-container>
+              <ng-container *ngIf="currentMode === 'trash'">
+                Thùng rác trống
+              </ng-container>
+              <ng-container *ngIf="currentMode === 'favorites'">
+                Bạn chưa đánh dấu tệp tin nào là yêu thích
+              </ng-container>
+            </span>
           </div>
         </td>
       </tr>
@@ -125,7 +222,12 @@
   </p-table>
 
   <!-- Dialog tạo thư mục -->
-  <p-dialog header="Tạo thư mục mới" [(visible)]="showCreateFolderDialog" [modal]="true" [style]="{width: '450px'}">
+  <p-dialog
+    header="Tạo thư mục mới"
+    [(visible)]="showCreateFolderDialog"
+    [modal]="true"
+    [style]="{ width: '450px' }"
+  >
     <div class="field mb-4">
       <label for="folderName" class="block mb-2">Tên thư mục</label>
       <input
@@ -139,13 +241,29 @@
       />
     </div>
     <ng-template pTemplate="footer">
-      <button pButton type="button" label="Hủy" class="p-button-text" (click)="showCreateFolderDialog = false"></button>
-      <button pButton type="button" label="Tạo" (click)="createFolder()"></button>
+      <button
+        pButton
+        type="button"
+        label="Hủy"
+        class="p-button-text"
+        (click)="showCreateFolderDialog = false"
+      ></button>
+      <button
+        pButton
+        type="button"
+        label="Tạo"
+        (click)="createFolder()"
+      ></button>
     </ng-template>
   </p-dialog>
 
   <!-- Dialog đổi tên -->
-  <p-dialog header="Đổi tên" [(visible)]="showRenameDialog" [modal]="true" [style]="{width: '450px'}">
+  <p-dialog
+    header="Đổi tên"
+    [(visible)]="showRenameDialog"
+    [modal]="true"
+    [style]="{ width: '450px' }"
+  >
     <div class="field mb-4">
       <label for="fileName" class="block mb-2">Tên mới</label>
       <input
@@ -159,13 +277,24 @@
       />
     </div>
     <ng-template pTemplate="footer">
-      <button pButton type="button" label="Hủy" class="p-button-text" (click)="showRenameDialog = false"></button>
+      <button
+        pButton
+        type="button"
+        label="Hủy"
+        class="p-button-text"
+        (click)="showRenameDialog = false"
+      ></button>
       <button pButton type="button" label="Lưu" (click)="renameFile()"></button>
     </ng-template>
   </p-dialog>
 
   <!-- Dialog tải lên -->
-  <p-dialog header="Tải lên tệp tin" [(visible)]="showUploadDialog" [modal]="true" [style]="{width: '600px'}">
+  <p-dialog
+    header="Tải lên tệp tin"
+    [(visible)]="showUploadDialog"
+    [modal]="true"
+    [style]="{ width: '600px' }"
+  >
     <app-file-upload
       [parentFolderId]="currentFolder"
       (uploaded)="onFileUploaded()"
@@ -174,25 +303,35 @@
   </p-dialog>
 
   <!-- Dialog xem chi tiết file -->
-  <p-dialog header="Chi tiết tệp tin" [(visible)]="fileDetailDialog" [modal]="true" [style]="{width: '70vw', maxWidth: '800px'}">
+  <p-dialog
+    header="Chi tiết tệp tin"
+    [(visible)]="fileDetailDialog"
+    [modal]="true"
+    [style]="{ width: '70vw', maxWidth: '800px' }"
+  >
     <div *ngIf="fileDetail">
       <div class="grid grid-cols-2 gap-4">
         <div>
           <h3 class="text-lg font-medium mb-2">Thông tin cơ bản</h3>
+          <div class="mb-2"><strong>Tên:</strong> {{ fileDetail.name }}</div>
           <div class="mb-2">
-            <strong>Tên:</strong> {{ fileDetail.name }}
-          </div>
-          <div class="mb-2">
-            <strong>Loại:</strong> {{ fileDetail.type === FileType.Folder ? 'Thư mục' : (fileDetail.extension || 'Tệp tin') }}
+            <strong>Loại:</strong>
+            {{
+              fileDetail.type === FileType.Folder
+                ? "Thư mục"
+                : fileDetail.extension || "Tệp tin"
+            }}
           </div>
           <div class="mb-2" *ngIf="fileDetail.type === FileType.File">
             <strong>Kích thước:</strong> {{ fileDetail.formattedSize }}
           </div>
           <div class="mb-2">
-            <strong>Ngày tạo:</strong> {{ fileDetail.createdAt | date:'dd/MM/yyyy HH:mm' }}
+            <strong>Ngày tạo:</strong>
+            {{ fileDetail.createdAt | date : "dd/MM/yyyy HH:mm" }}
           </div>
           <div class="mb-2">
-            <strong>Cập nhật lần cuối:</strong> {{ fileDetail.updatedAt | date:'dd/MM/yyyy HH:mm' }}
+            <strong>Cập nhật lần cuối:</strong>
+            {{ fileDetail.updatedAt | date : "dd/MM/yyyy HH:mm" }}
           </div>
           <div class="mb-2" *ngIf="fileDetail.type === FileType.File">
             <strong>Phiên bản:</strong> {{ fileDetail.version }}
@@ -201,13 +340,16 @@
         <div>
           <h3 class="text-lg font-medium mb-2">Chia sẻ</h3>
           <div *ngIf="fileDetail.isShared">
-            <div class="mb-2">
-              <strong>Trạng thái:</strong> Đã chia sẻ
-            </div>
+            <div class="mb-2"><strong>Trạng thái:</strong> Đã chia sẻ</div>
             <div class="mb-2">
               <strong>Mức độ truy cập:</strong>
-              {{ fileDetail.accessLevel === 0 ? 'Riêng tư' :
-                 fileDetail.accessLevel === 1 ? 'Công khai' : 'Chia sẻ với người dùng khác' }}
+              {{
+                fileDetail.accessLevel === 0
+                  ? "Riêng tư"
+                  : fileDetail.accessLevel === 1
+                  ? "Công khai"
+                  : "Chia sẻ với người dùng khác"
+              }}
             </div>
           </div>
           <div *ngIf="!fileDetail.isShared">
@@ -218,11 +360,22 @@
 
       <div class="mt-4" *ngIf="fileDetail.type === FileType.File">
         <h3 class="text-lg font-medium mb-2">Xem trước</h3>
-        <div class="border rounded p-4 bg-gray-50 h-64 flex items-center justify-center">
+        <div
+          class="border rounded p-4 bg-gray-50 h-64 flex items-center justify-center"
+        >
           <!-- Xem trước nội dung file tùy theo loại -->
-          <ng-container *ngIf="fileDetail.extension === '.jpg' || fileDetail.extension === '.jpeg' ||
-                               fileDetail.extension === '.png' || fileDetail.extension === '.gif'">
-            <img [src]="fileDetail.virtualPath" class="max-h-full max-w-full object-contain" />
+          <ng-container
+            *ngIf="
+              fileDetail.extension === '.jpg' ||
+              fileDetail.extension === '.jpeg' ||
+              fileDetail.extension === '.png' ||
+              fileDetail.extension === '.gif'
+            "
+          >
+            <img
+              [src]="fileDetail.virtualPath"
+              class="max-h-full max-w-full object-contain"
+            />
           </ng-container>
           <ng-container *ngIf="fileDetail.extension === '.pdf'">
             <div class="text-center">
@@ -230,9 +383,15 @@
               <p>Tệp tin PDF</p>
             </div>
           </ng-container>
-          <ng-container *ngIf="fileDetail.extension !== '.jpg' && fileDetail.extension !== '.jpeg' &&
-                               fileDetail.extension !== '.png' && fileDetail.extension !== '.gif' &&
-                               fileDetail.extension !== '.pdf'">
+          <ng-container
+            *ngIf="
+              fileDetail.extension !== '.jpg' &&
+              fileDetail.extension !== '.jpeg' &&
+              fileDetail.extension !== '.png' &&
+              fileDetail.extension !== '.gif' &&
+              fileDetail.extension !== '.pdf'
+            "
+          >
             <div class="text-center">
               <i class="pi pi-file text-5xl text-blue-500 mb-2"></i>
               <p>Không có bản xem trước cho loại tệp này</p>
@@ -242,8 +401,21 @@
       </div>
     </div>
     <ng-template pTemplate="footer">
-      <button pButton type="button" label="Đóng" class="p-button-text" (click)="fileDetailDialog = false"></button>
-      <button *ngIf="fileDetail && fileDetail.type === FileType.File" pButton type="button" icon="pi pi-download" label="Tải xuống" (click)="downloadFile(fileDetail)"></button>
+      <button
+        pButton
+        type="button"
+        label="Đóng"
+        class="p-button-text"
+        (click)="fileDetailDialog = false"
+      ></button>
+      <button
+        *ngIf="fileDetail && fileDetail.type === FileType.File"
+        pButton
+        type="button"
+        icon="pi pi-download"
+        label="Tải xuống"
+        (click)="downloadFile(fileDetail)"
+      ></button>
     </ng-template>
   </p-dialog>
 

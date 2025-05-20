@@ -1,14 +1,15 @@
 <ul class="list-none p-0 m-0 overflow-hidden">
   <ng-template #recursiveList let-items>
     @for (item of items; track item.label) {
-      <li>
+      <li >
         <a
         routerLink="{{ item.route }}"
+        [routerLinkActiveOptions]="{exact: true}"
         [routerLinkActive]="item.route ? 'menu-item-active' : ''"
           pRipple
           [ngClass]="{
             'menu-item flex items-center cursor-pointer rounded-border text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors p-ripple': true,
-     
+
             'justify-center py-3 px-2': !(isMenuVisible$ | async),
             'p-4': isMenuVisible$ | async
           }"

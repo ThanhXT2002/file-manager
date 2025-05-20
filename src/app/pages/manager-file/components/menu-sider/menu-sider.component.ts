@@ -39,12 +39,17 @@ export class MenuSiderComponent implements OnInit {
   private initMenuItems(): void {
     this.menuItems = [
       {
-        label: 'New',
-        icon: 'pi pi-plus',
+        label: 'Group Files',
+        icon: 'pi pi-file',
         children: [
           {
+            label: 'All Files',
+            icon: 'pi pi-list-check',
+            route: '/manager-file/my-files'
+          },
+          {
             label: 'Upload File',
-            icon: 'pi pi-file-arrow-up',
+            icon: 'pi pi-cloud-upload',
             action: () => this.handleExpenses(),
           },
           {
@@ -54,21 +59,15 @@ export class MenuSiderComponent implements OnInit {
           },
           {
             label: 'Upload Folder',
-            icon: 'pi pi-folder-open',
+            icon: 'pi pi-file-arrow-up',
             action: () => this.handleExpenses(),
           },
         ],
       },
       {
-        label: 'My Files',
-        icon: 'pi pi-file',
-        route: '/manager-file/my-files',
-        action: () => this.handleDashboard(),
-      },
-      {
         label: 'Starred',
         icon: 'pi pi-star',
-        route: '/starred',
+        route: '/manager-file/favorites',
         action: () => this.handleBookmarks(),
       },
       {

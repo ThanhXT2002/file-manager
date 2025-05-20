@@ -5,6 +5,7 @@ import { IconField } from 'primeng/iconfield';
 import { InputIcon } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
 import { FileService } from '../../../../core/service/file.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-search',
@@ -14,40 +15,21 @@ import { FileService } from '../../../../core/service/file.service';
 })
 export class SearchComponent {
 
-  searchTerm:string = '';
-  loading:boolean = false;
+  searchTerm: string = '';
+  loading: boolean = false;
 
-    constructor(
-      private fileService: FileService
-    ) {
+  constructor(
+    private fileService: FileService,
+    private router: Router
+  ) {}
 
+  // Thực hiện tìm kiếm khi người dùng nhấn Enter
+  onSearch(): void {
+    if (this.searchTerm.trim()) {
+      // Chuyển hướng đến trang search với keyword
+      this.router.navigate(['/manager-file/search', encodeURIComponent(this.searchTerm.trim())]);
     }
-
-    // Tìm kiếm file
-  // searchFiles(): void {
-  //   if (!this.searchTerm.trim()) {
-  //     this.loadFiles();
-  //     return;
-  //   }
-
-  //   this.loading = true;
-  //   this.fileService.searchFiles({ searchTerm: this.searchTerm }, 1, this.pageSize)
-  //     .subscribe({
-  //       next: (response) => {
-  //         this.fileList = response.data?.items || [];
-  //         this.totalRecords = response.data?.totalCount || 0;
-  //         this.loading = false;
-  //       },
-  //       error: (error) => {
-  //         this.messageService.add({
-  //           severity: 'error',
-  //           summary: 'Lỗi',
-  //           detail: 'Không thể tìm kiếm tệp tin'
-  //         });
-  //         this.loading = false;
-  //       }
-  //     });
-  // }
+  }
 
 
 }

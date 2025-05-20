@@ -23,6 +23,8 @@ import { FileBrowserComponent } from '../components/file-browser/file-browser.co
 import { EncryptionService } from '../../../core/service/encryption.service';
 import { FolderPathService } from '../../../core/service/folder-path.service';
 import { BreadcrumbService } from '../../../core/service/breadcrumb.service';
+import { SearchService } from '../../../core/service/search.service';
+
 
 @Component({
   selector: 'app-home',
@@ -72,6 +74,8 @@ export class HomeComponent extends BasicPage {
 
   // Enum cho template
   FileType = FileType;
+  currentMode: 'files' | 'trash' | 'favorites' | 'search' = 'files';
+  isSearchMode = false;
 
   constructor(
     protected override globalSer: GlobalService,
@@ -82,56 +86,69 @@ export class HomeComponent extends BasicPage {
     private route: ActivatedRoute,
     private encryptionService: EncryptionService,
     private breadcrumbService: BreadcrumbService,
-    private folderPathService: FolderPathService
+    private folderPathService: FolderPathService,
+    private searchService: SearchService  // Thêm SearchService
   ) {
     super(globalSer);
   }
 
   ngOnInit() {
+  // Đặt lại isSearchMode mặc định
+  this.isSearchMode = false;
+
   // Kết hợp cả thông tin từ paramMap và data của route
   this.route.params.subscribe(params => {
     this.route.data.subscribe(data => {
-      // Xử lý mode đặc biệt trước (trash, favorites, etc.)
+      // Xử lý mode đặc biệt trước (trash, favorites, search, etc.)
       if (data['mode']) {
-        if (data['mode'] === 'trash') {
-          this.breadcrumbService.updateBreadcrumbs([
-            { label: 'My files', routerLink: '/manager-file/my-files' },
-            { label: 'Thùng rác', routerLink: '/manager-file/trash' },
-          ]);
-          // Có thể thực hiện các xử lý khác dành riêng cho chế độ trash
+        this.currentMode = data['mode'];
+
+        if (this.currentMode === 'trash') {
+          // Tải danh sách file trong thùng rác
           this.loadTrashFiles();
-          return;
-        } else if (data['mode'] === 'favorites') {
-          this.breadcrumbService.updateBreadcrumbs([
-            { label: 'My files', routerLink: '/manager-file/my-files' },
-            { label: 'Yêu thích', routerLink: '/manager-file/favorites' },
-          ]);
-          // Có thể thực hiện các xử lý khác dành riêng cho chế độ favorites
+        } else if (this.currentMode === 'favorites') {
+          // Tải danh sách file yêu thích
           this.loadFavoriteFiles();
-          return;
+        } else if (this.currentMode === 'search') {
+          // Xử lý mode search
+          const keyword = params['keyword'];
+          if (keyword) {
+            this.searchTerm = decodeURIComponent(keyword);
+            this.isSearchMode = true;
+
+            // Cập nhật giá trị tìm kiếm cho SearchComponent
+            if (this.searchService) {
+              this.searchService.updateSearchTerm(this.searchTerm);
+            }
+
+            // Tìm kiếm files với từ khóa
+            this.searchFiles(this.searchTerm);
+          } else {
+            // Nếu không có từ khóa, quay về trang chủ
+            this.router.navigate(['/manager-file/my-files']);
+          }
+        }
+      } else {
+        this.currentMode = 'files';
+
+        // Trường hợp mode files - xử lý theo folder ID
+        const encryptedId = params['encryptedId'];
+        if (encryptedId) {
+          const folderId = this.encryptionService.decryptId(encryptedId);
+          if (folderId !== null) {
+            this.currentFolder = folderId;
+            this.loadFiles();
+          } else {
+            this.router.navigate(['/manager-file/my-files']);
+          }
+        } else {
+          this.currentFolder = undefined;
+          this.loadFiles();
         }
       }
 
-      // Trường hợp thông thường: xử lý theo folder ID
-      const encryptedId = params['encryptedId'];
-      if (encryptedId) {
-        const folderId = this.encryptionService.decryptId(encryptedId);
-        if (folderId !== null) {
-          this.currentFolder = folderId;
-          // Lấy đường dẫn thư mục đầy đủ và cập nhật breadcrumb
-          this.updateBreadcrumbForFolder(folderId);
-          this.loadFiles(); // Tải danh sách files trong thư mục
-        } else {
-          // ID không hợp lệ, chuyển về root
-          this.router.navigate(['/manager-file/my-files']);
-          this.breadcrumbService.reset();
-        }
-      } else {
-        // Trường hợp root folder
-        this.currentFolder = undefined;
-        this.breadcrumbService.reset(); // Reset breadcrumb về "My Files"
-        this.loadFiles(); // Tải danh sách files gốc
-      }
+      // Cập nhật breadcrumb dựa trên mode hiện tại
+      this.updateBreadcrumbsByMode();
     });
   });
 
@@ -139,6 +156,8 @@ export class HomeComponent extends BasicPage {
     this.pageLoaded();
   });
 }
+
+
 
 // Các phương thức để tải dữ liệu theo các mode khác nhau
 loadTrashFiles() {
@@ -260,6 +279,38 @@ loadFavoriteFiles() {
     }
   }
 
+  updateBreadcrumbsByMode(): void {
+  switch (this.currentMode) {
+    case 'trash':
+      this.breadcrumbService.updateBreadcrumbs([
+        { label: 'My Files', routerLink: '/manager-file/my-files' },
+        { label: 'Thùng rác', routerLink: '/manager-file/trash' }
+      ]);
+      break;
+    case 'favorites':
+      this.breadcrumbService.updateBreadcrumbs([
+        { label: 'My Files', routerLink: '/manager-file/my-files' },
+        { label: 'Yêu thích', routerLink: '/manager-file/favorites' }
+      ]);
+      break;
+    case 'search':
+      this.breadcrumbService.updateBreadcrumbs([
+        { label: 'My Files', routerLink: '/manager-file/my-files' },
+        { label: `Tìm kiếm: "${this.searchTerm}"`, routerLink: `/manager-file/search/${encodeURIComponent(this.searchTerm)}` }
+      ]);
+      break;
+    case 'files':
+      if (this.currentFolder) {
+        this.updateBreadcrumbForFolder(this.currentFolder);
+      } else {
+        this.breadcrumbService.updateBreadcrumbs([
+          { label: 'My Files', routerLink: '/manager-file/my-files' }
+        ]);
+      }
+      break;
+  }
+}
+
 
   updateBreadcrumbForFolder(folderId: number): void {
   this.folderPathService.buildFolderPath(folderId).subscribe(
@@ -281,15 +332,19 @@ loadFavoriteFiles() {
 }
 
   navigateToFolder(folderId?: number): void {
-    if (folderId) {
-      const encryptedId = this.encryptionService.encryptId(folderId);
-      this.router.navigate(['/manager-file/files', encryptedId]);
-      // Breadcrumb sẽ được cập nhật trong ngOnInit khi route thay đổi
-    } else {
-      this.router.navigate(['/manager-file/my-files']);
-      this.breadcrumbService.reset();
-    }
+  if (folderId) {
+    // Đi đến thư mục cụ thể
+    const encryptedId = this.encryptionService.encryptId(folderId);
+    this.router.navigate(['/manager-file/files', encryptedId]);
+    // currentMode và currentFolder sẽ được cập nhật trong ngOnInit khi route thay đổi
+    // breadcrumb cũng sẽ được cập nhật tự động sau đó
+  } else {
+    // Quay lại thư mục gốc
+    this.router.navigate(['/manager-file/my-files']);
+    // currentMode và currentFolder sẽ được cập nhật trong ngOnInit khi route thay đổi
+    // breadcrumb cũng sẽ được cập nhật tự động sau đó
   }
+}
 
   openCreateFolderDialog(): void {
     this.newFolderName = '';
@@ -320,6 +375,8 @@ loadFavoriteFiles() {
           });
           this.showCreateFolderDialog = false;
           this.loadFiles();
+          // Cập nhật breadcrumb nếu cần thiết
+      this.updateBreadcrumbsByMode();
         },
         error: (error) => {
           this.messageService.add({
@@ -395,13 +452,19 @@ loadFavoriteFiles() {
     });
   }
 
-  openFile(file: FileModel): void {
-    if (file.type === FileType.Folder) {
-      this.navigateToFolder(file.id);
-    } else {
-      this.showFileDetails(file);
-    }
+  handleDoubleClick(file: FileModel): void {
+  if (this.currentMode === 'trash') {
+    // Trong thùng rác, chỉ cho phép xem chi tiết file
+    this.showFileDetails(file);
+    return;
   }
+
+  if (file.type === FileType.Folder) {
+    this.navigateToFolder(file.id);
+  } else {
+    this.showFileDetails(file);
+  }
+}
 
   showFileDetails(file: FileModel): void {
     this.fileDetail = file;
@@ -475,29 +538,115 @@ loadFavoriteFiles() {
   }
 
   // Tìm kiếm file
-  searchFiles(): void {
-    if (!this.searchTerm.trim()) {
-      this.loadFiles();
-      return;
-    }
-
-    this.loading = true;
-    this.fileService
-      .searchFiles({ searchTerm: this.searchTerm }, 1, this.pageSize)
-      .subscribe({
-        next: (response) => {
-          this.fileList = response.data?.items || [];
-          this.totalRecords = response.data?.totalCount || 0;
-          this.loading = false;
-        },
-        error: (error) => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Lỗi',
-            detail: 'Không thể tìm kiếm tệp tin',
-          });
-          this.loading = false;
-        },
-      });
+  searchFiles(keyword: string): void {
+  if (!keyword || !keyword.trim()) {
+    this.loadFiles();
+    return;
   }
+
+  this.loading = true;
+  this.fileService.searchFiles({ searchTerm: keyword.trim() }, this.currentPage, this.pageSize)
+    .subscribe({
+      next: (response) => {
+        this.fileList = response.data?.items || [];
+        this.totalRecords = response.data?.totalCount || 0;
+        this.loading = false;
+      },
+      error: (error) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Lỗi',
+          detail: 'Không thể tìm kiếm tệp tin'
+        });
+        this.loading = false;
+      }
+    });
+}
+
+  // Phương thức khôi phục file từ thùng rác
+restoreFile(file: FileModel): void {
+  this.fileService.restoreFile(file.id).subscribe({
+    next: () => {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Thành công',
+        detail: 'Đã khôi phục tệp tin'
+      });
+      // Tải lại danh sách file rác
+      this.loadTrashFiles();
+    },
+    error: (error) => {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Lỗi',
+        detail: 'Không thể khôi phục tệp tin'
+      });
+    }
+  });
+}
+
+// Hiển thị xác nhận xóa vĩnh viễn
+confirmPermanentDelete(file: FileModel): void {
+  this.confirmationService.confirm({
+    message: `Bạn có chắc chắn muốn xóa vĩnh viễn "${file.name}" không? Thao tác này không thể hoàn tác.`,
+    header: 'Xác nhận xóa vĩnh viễn',
+    icon: 'pi pi-exclamation-triangle',
+    accept: () => this.permanentDeleteFile(file)
+  });
+}
+
+// Xóa vĩnh viễn file
+permanentDeleteFile(file: FileModel): void {
+  this.fileService.permanentDeleteFile(file.id).subscribe({
+    next: () => {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Thành công',
+        detail: 'Đã xóa vĩnh viễn tệp tin'
+      });
+      // Tải lại danh sách file rác
+      this.loadTrashFiles();
+    },
+    error: (error) => {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Lỗi',
+        detail: 'Không thể xóa vĩnh viễn tệp tin'
+      });
+    }
+  });
+}
+
+// Xác nhận làm trống thùng rác
+confirmEmptyTrash(): void {
+  this.confirmationService.confirm({
+    message: 'Bạn có chắc chắn muốn làm trống thùng rác? Tất cả tệp tin sẽ bị xóa vĩnh viễn và không thể khôi phục.',
+    header: 'Xác nhận làm trống thùng rác',
+    icon: 'pi pi-exclamation-triangle',
+    accept: () => this.emptyTrash()
+  });
+}
+
+// Làm trống thùng rác
+emptyTrash(): void {
+  // Giả sử bạn đã có API endpoint cho thao tác này
+  // Nếu không có, bạn có thể xóa vĩnh viễn từng file trong danh sách
+  this.fileService.emptyTrash().subscribe({
+    next: () => {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Thành công',
+        detail: 'Đã làm trống thùng rác'
+      });
+      this.loadTrashFiles(); // Tải lại danh sách trống
+    },
+    error: (error) => {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Lỗi',
+        detail: 'Không thể làm trống thùng rác'
+      });
+    }
+  });
+}
 }

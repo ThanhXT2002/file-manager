@@ -38,6 +38,11 @@ const routes: Routes = [
     path: 'favorites',
     component: HomeComponent,
     data: { mode: 'favorites' }
+  },
+  {
+    path: 'search/:keyword',
+    component: HomeComponent,
+    data: { mode: 'search' }
   }
 ];
 @NgModule({

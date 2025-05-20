@@ -8,7 +8,7 @@ import { BasicPage } from '../../../core/shares/basic-page';
 import { environment } from '../../../../environments/environment';
 import { LinkRegisterForgotPasswordComponent } from "../components/link-register-forgot-password/link-register-forgot-password.component";
 import { AuthService } from '../../../core/service/auth.service';
-import { interval, takeWhile } from 'rxjs';
+import { catchError, filter, finalize, interval, of, switchMap, take, takeWhile, timeout } from 'rxjs';
 import { ResponseHandlerService } from '../../../core/service/response-handler.service';
 import { FormEmailOtpChildComponent } from "../components/form-email-otp-child/form-email-otp-child.component";
 
@@ -53,27 +53,53 @@ export class LoginWithOtpComponent extends BasicPage {
 
 
   onLogin() {
-    if (this.loginForm.valid) {
-      const data = this.loginForm.value;
-      console.log('Form data:', data);
-      this.globalSer.openLoading();
-      this._subscriptions.push(
-        this.authService.loginByOtp(data).subscribe({
-          next: () => {
-            this.responseHandler.handleSuccess('auth.login-success', () => {
-              this.router.navigate(['/manager-file/my-files']);
-            });
-          },
-          error: (error) => {
-            this.responseHandler.handleErrorWithUnverifiedCheck(
-              error,
-              () => this.loginForm.get('email')?.value
-            );
-          },
-        })
-      );
-    }
+  if (this.loginForm.valid) {
+    const data = this.loginForm.value;
+    console.log('Form data:', data);
+    this.globalSer.openLoading();
+
+    const subscription = this.authService.loginByOtp(data)
+      .pipe(
+        // Chuyển sang theo dõi API fetchFullUserInfo
+        // (đã được gọi tự động trong loginByOtp)
+        switchMap(() => {
+          // Đợi thông tin người dùng được cập nhật từ currentUser$
+          // Lấy giá trị đầu tiên khác null
+          return this.authService.currentUser$.pipe(
+            // Lọc ra các giá trị null
+            filter(user => !!user),
+            // Chỉ lấy giá trị đầu tiên
+            take(1),
+            // Đặt timeout 5 giây
+            timeout(5000),
+            // Nếu timeout hoặc lỗi, vẫn tiếp tục
+            catchError(err => {
+              console.warn('Could not get full user info after OTP login, continuing with basic info:', err);
+              return of(null);
+            })
+          );
+        }),
+        // Đảm bảo đóng loading trong mọi trường hợp
+        finalize(() => this.globalSer.closeLoading())
+      )
+      .subscribe({
+        next: () => {
+          this.responseHandler.handleSuccess('auth.login-success', () => {
+            this.router.navigate(['/manager-file/my-files']);
+          });
+        },
+        error: (error) => {
+          this.responseHandler.handleErrorWithUnverifiedCheck(
+            error,
+            () => this.loginForm.get('email')?.value
+          );
+        }
+      });
+
+    // Thêm subscription vào mảng _subscriptions để dọn dẹp sau này
+    this._subscriptions.push(subscription);
   }
+}
 
   goBack() {
     window.history.go(-1);

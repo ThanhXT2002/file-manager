@@ -40,6 +40,16 @@ export const authInterceptor: HttpInterceptorFn = (
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
+      // Xử lý lỗi kết nối mạng đặc biệt
+      if (error.status === 0) {
+        console.warn('Network connection error:', req.url);
+
+        // Đối với các API xác thực, không cần xử lý đặc biệt
+        if (isAuthCheckRequest || isRefreshRequest) {
+          return throwError(() => error);
+        }
+      }
+
       // Chỉ xử lý lỗi 401 nếu không phải là request kiểm tra auth và người dùng đã đăng nhập
       if (
         error.status === 401 &&
@@ -53,15 +63,6 @@ export const authInterceptor: HttpInterceptorFn = (
           authService,
           refreshTokenInProgress
         );
-      }
-
-      // Xử lý lỗi 401 từ các request auth
-      if (isAuthRequest && error.status === 401) {
-        // Đánh dấu người dùng không đăng nhập khi /auth/me hoặc /auth/refresh thất bại
-        if (isAuthCheckRequest || isRefreshRequest) {
-          authService.currentUserSubject.next(null);
-          authService.stopRefreshTokenTimer?.();
-        }
       }
 
       return throwError(() => error);
@@ -93,6 +94,13 @@ function handleRefreshToken(
       }),
       catchError((refreshError) => {
         refreshTokenInProgress.next(false);
+
+        // Nếu là lỗi mạng, giữ nguyên trạng thái
+        if (refreshError.status === 0) {
+          console.warn('Network error during token refresh, keeping current state');
+          return throwError(() => refreshError);
+        }
+
         return throwError(() => refreshError);
       })
     );

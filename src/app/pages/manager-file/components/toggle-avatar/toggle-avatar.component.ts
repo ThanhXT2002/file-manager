@@ -6,18 +6,26 @@ import { ButtonModule } from 'primeng/button';
 import { GlobalService } from '../../../../core/service/global.service';
 import { Router, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { IUpdateProfile, User } from '../../../../core/interfaces/user.interface';
+import {
+  IUpdateProfile,
+  User,
+} from '../../../../core/interfaces/user.interface';
 import { TranslateService } from '@ngx-translate/core';
 import { CustomToastService } from '../../../../core/service/custom-toast.service';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
 import { DialogModule, Dialog } from 'primeng/dialog';
 import { FileUpload } from 'primeng/fileupload';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { ResponseHandlerService } from '../../../../core/service/response-handler.service';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { NoCachePipe } from '../../../../core/pipe/no-cache.pipe';
-
 
 class ItemMenu {
   title: string = '';
@@ -48,7 +56,7 @@ class ItemMenu {
     FileUpload,
     FloatLabelModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
   templateUrl: './toggle-avatar.component.html',
   styleUrl: './toggle-avatar.component.scss',
@@ -111,14 +119,29 @@ export class ToggleAvatarComponent implements OnInit {
   };
 
   ngOnInit(): void {
-    this.subscription = this.authService.currentUser$.subscribe((user) => {
-      this.user = user;
+    // Lấy user trực tiếp từ localStorage
+    const storedUser = this.authService.getUserFromStorage();
+    if (storedUser) {
+      this.user = storedUser;
       this.reBuildMenu();
       this.updateInforForm.patchValue({
-        fullName: user?.fullName,
-        address: user?.address,
-        avatar: user?.avatar,
+        fullName: storedUser.fullName,
+        address: storedUser.address,
+        avatar: storedUser.avatar,
       });
+    }
+
+    // Vẫn theo dõi thay đổi từ Observable
+    this.subscription = this.authService.currentUser$.subscribe((user) => {
+      if (user) {
+        this.user = user;
+        this.reBuildMenu();
+        this.updateInforForm.patchValue({
+          fullName: user.fullName,
+          address: user.address,
+          avatar: user.avatar,
+        });
+      }
     });
   }
 

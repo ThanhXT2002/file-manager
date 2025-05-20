@@ -85,24 +85,24 @@ export class HomeComponent extends BasicPage {
 
   ngOnInit() {
     // Lấy encrypted folderId từ route parameters và giải mã
-  this.route.paramMap.subscribe(params => {
-    const encryptedId = params.get('encryptedId');
-    if (encryptedId) {
-      const folderId = this.encryptionService.decryptId(encryptedId);
-      if (folderId !== null) {
-        this.currentFolder = folderId;
+    this.route.paramMap.subscribe((params) => {
+      const encryptedId = params.get('encryptedId');
+      if (encryptedId) {
+        const folderId = this.encryptionService.decryptId(encryptedId);
+        if (folderId !== null) {
+          this.currentFolder = folderId;
+        } else {
+          // ID không hợp lệ, chuyển về root
+          this.router.navigate(['/manager-file/files']);
+          return;
+        }
       } else {
-        // ID không hợp lệ, chuyển về root
-        this.router.navigate(['/manager-file/files']);
-        return;
+        this.currentFolder = undefined; // Root folder
       }
-    } else {
-      this.currentFolder = undefined; // Root folder
-    }
 
-    this.loadFiles();
-    this.setBreadcrumb();
-  });
+      this.loadFiles();
+      this.setBreadcrumb();
+    });
 
     this.createDelayObservable().subscribe((value) => {
       this.pageLoaded();
@@ -112,23 +112,30 @@ export class HomeComponent extends BasicPage {
   loadFiles(): void {
     this.loading = true;
 
-    // Đầu tiên, lấy tổng số bản ghi để quyết định cách hiển thị
+    // Sử dụng một giá trị đủ lớn cho pageSize khi chưa biết nếu cần phân trang hay không
+    const initialPageSize = 1000; // Hoặc một giá trị lớn hơn theo nhu cầu
+
     this.fileService
-      .getFiles(this.currentFolder, 1, 1) // Chỉ lấy 1 record để biết tổng số
+      .getFiles(this.currentFolder, 1, initialPageSize)
       .subscribe({
         next: (response) => {
+          this.fileList = response.data?.items || [];
           this.totalRecords = response.data?.totalCount || 0;
 
-          // Quyết định cách lấy dữ liệu dựa trên tổng số bản ghi
-          if (this.totalRecords <= 1000) {
-            // Nếu ít hơn 1000, lấy tất cả cùng lúc
-            this.shouldPaginate = false;
-            this.loadAllItems();
-          } else {
-            // Nếu nhiều hơn 1000, kích hoạt phân trang
-            this.shouldPaginate = true;
-            this.loadPagedItems();
+          // Quyết định nếu cần phân trang sau khi đã có dữ liệu
+          this.shouldPaginate = this.totalRecords > 1000;
+
+          // Nếu cần phân trang và tổng số bản ghi lớn hơn số đã tải
+          // thì mới cần tải lại theo trang (hiếm khi xảy ra)
+          if (this.shouldPaginate && this.totalRecords > initialPageSize) {
+            // Trong trường hợp rất hiếm khi có nhiều hơn 1000 items,
+            // và ta cần hiển thị trang khác với trang đầu tiên
+            if (this.currentPage > 1) {
+              this.loadPagedItems();
+            }
           }
+
+          this.loading = false;
         },
         error: (error) => {
           this.handleError(error);
@@ -136,8 +143,9 @@ export class HomeComponent extends BasicPage {
       });
   }
 
-  // Phương thức lấy theo từng trang
+  // Phương thức này chỉ được gọi khi cần chuyển trang và có hơn 1000 items
   loadPagedItems(): void {
+    this.loading = true;
     this.fileService
       .getFiles(this.currentFolder, this.currentPage, this.pageSize)
       .subscribe({
@@ -175,6 +183,7 @@ export class HomeComponent extends BasicPage {
     });
     this.loading = false;
   }
+
   setBreadcrumb(): void {
     // Logic để thiết lập breadcrumb dựa vào thư mục hiện tại
     this.breadcrumbItems = [{ name: 'Trang chủ', id: undefined }];
@@ -190,14 +199,14 @@ export class HomeComponent extends BasicPage {
   }
 
   navigateToFolder(folderId?: number): void {
-  if (folderId) {
-    const encryptedId = this.encryptionService.encryptId(folderId);
-    console.log(encryptedId)
-    this.router.navigate(['/manager-file/files', encryptedId]);
-  } else {
-    this.router.navigate(['/manager-file/files']);
+    if (folderId) {
+      const encryptedId = this.encryptionService.encryptId(folderId);
+      console.log(encryptedId);
+      this.router.navigate(['/manager-file/files', encryptedId]);
+    } else {
+      this.router.navigate(['/manager-file/files']);
+    }
   }
-}
 
   openCreateFolderDialog(): void {
     this.newFolderName = '';

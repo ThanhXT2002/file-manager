@@ -9,6 +9,8 @@ import { MenuSiderService } from '../../../../core/service/menu-sider.service';
 import { GlobalService } from '../../../../core/service/global.service';
 import { CustomToastService } from '../../../../core/service/custom-toast.service';
 import { TranslateService } from '@ngx-translate/core';
+import { FileManagerService } from '../../../../core/service/file-manager.service';
+import { EncryptionService } from '../../../../core/service/encryption.service';
 
 @Component({
   selector: 'app-menu-sider',
@@ -28,6 +30,8 @@ export class MenuSiderComponent implements OnInit {
     private globalService: GlobalService,
     private toastService: CustomToastService,
     private translateService: TranslateService,
+    private fileManagerService: FileManagerService,
+    private encryptionService: EncryptionService,
   ) {
     this.isMenuVisible$ = this.menuSiderService.isVisible$;
   }
@@ -50,12 +54,12 @@ export class MenuSiderComponent implements OnInit {
           {
             label: 'Upload File',
             icon: 'pi pi-cloud-upload',
-            action: () => this.handleExpenses(),
+            action: () => this.uploadFile(),
           },
           {
             label: 'New Folder',
             icon: 'pi pi-folder-plus',
-            action: () => this.handleExpenses(),
+            action: () => this.createFolder(),
           },
           {
             label: 'Upload Folder',
@@ -165,6 +169,18 @@ export class MenuSiderComponent implements OnInit {
     ];
   }
 
+  private getCurrentFolderId(): number | undefined {
+    const urlSegments = this.router.url.split('/');
+    if (urlSegments.length > 2 && urlSegments[1] === 'manager-file' && urlSegments[2] === 'files') {
+      const encryptedId = urlSegments[3];
+      if (encryptedId) {
+        const folderId = this.encryptionService.decryptId(encryptedId);
+        return folderId !== null ? folderId : undefined;
+      }
+    }
+    return undefined;
+  }
+
   toggleSubmenu(item: MenuItem): void {
     const itemKey = item.label;
 
@@ -239,6 +255,24 @@ export class MenuSiderComponent implements OnInit {
     // Kiểm tra nếu route hiện tại khớp với route của item
     return this.router.url === item.route;
   }
+
+
+  createFolder(): void {
+    const currentFolderId = this.getCurrentFolderId();
+    this.fileManagerService.showCreateFolderDialog(currentFolderId);
+  }
+
+  // Phương thức để mở dialog tải lên file
+  uploadFile(): void {
+    const currentFolderId = this.getCurrentFolderId();
+    this.fileManagerService.showUploadFileDialog(currentFolderId);
+  }
+
+  uploadFolder() {
+    console.log('Handling Upload Folder');
+    // Thêm code xử lý Upload Folder ở đây
+  }
+
 
   logout() {
     this.globalService.openLoading();

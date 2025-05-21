@@ -1,10 +1,11 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ChunkUploadProgress } from '../../../core/interfaces/ChunkUploadProgress';
 import { ChunkedUploadService } from '../../../core/service/chunked-upload.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-chunked-uploader',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './chunked-uploader.component.html',
   styleUrl: './chunked-uploader.component.scss'
 })

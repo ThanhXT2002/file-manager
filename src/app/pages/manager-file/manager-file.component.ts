@@ -1,5 +1,5 @@
 import { Breadcrumb, BreadcrumbModule } from 'primeng/breadcrumb';
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { AuthService } from '../../core/service/auth.service';
 import { HeaderComponent } from "./components/header/header.component";
@@ -26,15 +26,18 @@ export class ManagerFileComponent {
 
   constructor(
     private menuSiderService: MenuSiderService,
-    private breadcrumbService: BreadcrumbService
+    private breadcrumbService: BreadcrumbService,
+    private cdr: ChangeDetectorRef
   ) {
     this.isMenuVisible$ = this.menuSiderService.isVisible$;
+    this.items = [{ label: 'My Files', routerLink: '/manager-file/my-files' }];
   }
 
   ngOnInit() {
     // Đăng ký lắng nghe thay đổi từ service
     this.subscription = this.breadcrumbService.breadcrumbs$.subscribe(
       breadcrumbs => {
+         this.cdr.detectChanges();
         this.items = breadcrumbs;
       }
     );

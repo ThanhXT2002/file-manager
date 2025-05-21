@@ -13,6 +13,8 @@ import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { MessageService } from 'primeng/api';
+import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog';
+import { FileManagerService } from './core/service/file-manager.service';
 
 
 // Factory function cho TranslateLoader
@@ -40,6 +42,7 @@ export const appConfig: ApplicationConfig = {
     }),
     provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
     importProvidersFrom(
+      DynamicDialogModule,
       TranslateModule.forRoot({
         loader: {
           provide: TranslateLoader,
@@ -50,7 +53,9 @@ export const appConfig: ApplicationConfig = {
         isolate: false,
       })
     ),
+    FileManagerService,
     MessageService,
+    DialogService
   ],
 };
 

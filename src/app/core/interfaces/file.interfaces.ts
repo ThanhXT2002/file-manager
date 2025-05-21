@@ -87,3 +87,22 @@ export interface FileFilter {
   isFavorite?: boolean;
   tagIds?: number[];
 }
+
+export interface FileUploadResult {
+  id: number;
+  name: string;
+  success: boolean;
+  errorMessage: string | null;
+  fileInfo?: FileModel;
+}
+
+export interface FileUploadResponse {
+  successCount: number;
+  totalCount: number;
+  files: FileUploadResult[];
+}
+
+export interface UploadEvent {
+  originalEvent: Event;
+  files: File[];
+}

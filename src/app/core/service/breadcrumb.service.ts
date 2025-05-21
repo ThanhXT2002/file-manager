@@ -14,7 +14,9 @@ export class BreadcrumbService {
   constructor() { }
 
   updateBreadcrumbs(breadcrumbs: MenuItem[]): void {
+    setTimeout(() => {
     this.breadcrumbsSource.next(breadcrumbs);
+  });
   }
 
   reset(): void {

@@ -1,0 +1,32 @@
+<div class="p-fluid">
+  <div class="field mb-4">
+    <label for="folderName" class="block mb-2">Tên thư mục</label>
+    <input
+      id="folderName"
+      type="text"
+      pInputText
+      [(ngModel)]="folderName"
+      class="w-full"
+      autofocus
+      (keyup.enter)="createFolder()"
+    />
+  </div>
+
+  <div class="flex justify-content-end">
+    <button
+      pButton
+      type="button"
+      label="Hủy"
+      class="p-button-text mr-2"
+      (click)="cancel()"
+      [disabled]="isLoading"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Tạo"
+      (click)="createFolder()"
+      [loading]="isLoading"
+    ></button>
+  </div>
+</div>

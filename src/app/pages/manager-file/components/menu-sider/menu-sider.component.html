@@ -1,65 +1,78 @@
 <ul class="list-none p-0 m-0 overflow-hidden">
   <ng-template #recursiveList let-items>
     @for (item of items; track item.label) {
-      <li >
-        <a
-        routerLink="{{ item.route }}"
-        [routerLinkActiveOptions]="{exact: true}"
-        [routerLinkActive]="item.route ? 'menu-item-active' : ''"
-          pRipple
+    <li>
+      <a
+        [routerLink]="item.route && !item.children ? item.route : null"
+        [routerLinkActive]="
+          item.route && !item.children ? 'menu-item-active' : ''
+        "
+        pRipple
+        [ngClass]="{
+          'menu-item flex items-center cursor-pointer rounded-border text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors p-ripple': true,
+          'justify-center py-3 px-2': !(isMenuVisible$ | async),
+          'p-4': isMenuVisible$ | async
+        }"
+        (click)="handleItemClick(item)"
+        [title]="item.label"
+      >
+        <i
+          [class]="item.icon"
           [ngClass]="{
-            'menu-item flex items-center cursor-pointer rounded-border text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors p-ripple': true,
-
-            'justify-center py-3 px-2': !(isMenuVisible$ | async),
-            'p-4': isMenuVisible$ | async
+            'mr-2': isMenuVisible$ | async,
+            'text-xl': !(isMenuVisible$ | async),
+            'animate-pulse':
+              isExpanded(item) && item.children && (isMenuVisible$ | async)
           }"
-          (click)="item.route ? null : handleItemClick(item)"
-          [title]="item.label"
+        ></i>
+
+        @if (isMenuVisible$ | async) {
+        <span class="font-medium transition-opacity duration-200">{{
+          item.label
+        }}</span>
+
+        @if (item.children) {
+        <i
+          class="pi pi-chevron-down ml-auto menu-icon transition-transform duration-300"
+          [ngClass]="{ expanded: isExpanded(item) }"
+        ></i>
+        } } @if (item.badge) {
+        <span
+          class="inline-flex items-center justify-center bg-primary text-primary-contrast rounded-full transition-all duration-200"
+          [ngClass]="{
+            'ml-auto': isMenuVisible$ | async,
+            'ml-0 absolute right-2 top-3 text-xs': !(isMenuVisible$ | async)
+          }"
+          [ngStyle]="{
+            transform: (isMenuVisible$ | async) ? '' : 'translate(30%, -30%)',
+            'min-width': (isMenuVisible$ | async) ? '1.5rem' : '1rem',
+            height: (isMenuVisible$ | async) ? '1.5rem' : '1rem'
+          }"
         >
-          <i [class]="item.icon"
-             [ngClass]="{
-               'mr-2': isMenuVisible$ | async,
-               'text-xl': !(isMenuVisible$ | async),
-               'animate-pulse': isExpanded(item) && item.children && (isMenuVisible$ | async)
-             }"></i>
-
-          @if (isMenuVisible$ | async) {
-            <span class="font-medium transition-opacity duration-200">{{ item.label }}</span>
-
-            @if (item.children) {
-              <i class="pi pi-chevron-down ml-auto menu-icon transition-transform duration-300"
-                 [ngClass]="{ 'expanded': isExpanded(item) }"></i>
-            }
-          }
-
-          @if (item.badge) {
-            <span
-              class="inline-flex items-center justify-center bg-primary text-primary-contrast rounded-full transition-all duration-200"
-              [ngClass]="{
-                'ml-auto': isMenuVisible$ | async,
-                'ml-0 absolute right-2 top-3 text-xs': !(isMenuVisible$ | async)
-              }"
-              [ngStyle]="{
-                'transform': (isMenuVisible$ | async) ? '' : 'translate(30%, -30%)',
-                'min-width': (isMenuVisible$ | async) ? '1.5rem' : '1rem',
-                'height': (isMenuVisible$ | async) ? '1.5rem' : '1rem'
-              }">
-              {{ item.badge }}
-            </span>
-          }
-        </a>
-        @if (item.children && (isMenuVisible$ | async)) {
-          <div class="overflow-hidden">
-            <ul
-              class="list-none py-0 pl-4 pr-0 m-0 submenu"
-              [ngClass]="{ 'expanded': isExpanded(item) }">
-              <ng-container *ngTemplateOutlet="recursiveList; context:{ $implicit: item.children }"></ng-container>
-            </ul>
-          </div>
+          {{ item.badge }}
+        </span>
         }
-      </li>
+      </a>
+      @if (item.children && (isMenuVisible$ | async)) {
+      <div class="overflow-hidden">
+        <ul
+          class="list-none py-0 pl-4 pr-0 m-0 submenu"
+          [ngClass]="{ expanded: isExpanded(item) }"
+        >
+          <ng-container
+            *ngTemplateOutlet="
+              recursiveList;
+              context: { $implicit: item.children }
+            "
+          ></ng-container>
+        </ul>
+      </div>
+      }
+    </li>
     }
   </ng-template>
 
-  <ng-container *ngTemplateOutlet="recursiveList; context:{ $implicit: menuItems }"></ng-container>
+  <ng-container
+    *ngTemplateOutlet="recursiveList; context: { $implicit: menuItems }"
+  ></ng-container>
 </ul>

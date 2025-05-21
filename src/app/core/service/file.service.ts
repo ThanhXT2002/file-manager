@@ -5,6 +5,8 @@ import {
   FileFilter,
   FileListResponse,
   FileModel,
+  FileUploadResponse,
+  FileUploadResult,
   FileVersion,
   FolderStructure,
 } from '../interfaces/file.interfaces';
@@ -127,6 +129,22 @@ export class FileService {
       request
     );
   }
+
+  // Cập nhật phương thức uploads multiple files
+uploadFiles(files: File[], parentId?: number): Observable<ApiResponse<FileUploadResponse>> {
+  const formData = new FormData();
+  // Thêm nhiều file vào formData
+  files.forEach(file => {
+    formData.append('files', file);  // <-- THAY ĐỔI NÀY
+  });
+
+  let url = `${this.baseUrl}/uploads`;
+  if (parentId !== undefined) {
+    url += `?parentId=${parentId}`;
+  }
+
+  return this.http.post<ApiResponse<FileUploadResponse>>(url, formData);
+}
 
   // Tải lên file
   uploadFile(

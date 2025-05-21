@@ -27,26 +27,6 @@
 
     <!-- Buttons khác nhau theo mode -->
     <div class="flex gap-2">
-      <!-- Chỉ hiển thị nút tải lên và tạo thư mục trong mode files -->
-      <ng-container *ngIf="currentMode === 'files'">
-        <button
-          pButton
-          type="button"
-          icon="pi pi-upload"
-          label="Tải lên"
-          class="p-button-primary"
-          (click)="openUploadDialog()"
-        ></button>
-        <button
-          pButton
-          type="button"
-          icon="pi pi-folder"
-          label="Tạo thư mục"
-          class="p-button-secondary"
-          (click)="openCreateFolderDialog()"
-        ></button>
-      </ng-container>
-
       <!-- Nút làm trống thùng rác trong mode trash -->
       <ng-container *ngIf="currentMode === 'trash'">
         <button
@@ -221,41 +201,6 @@
     </ng-template>
   </p-table>
 
-  <!-- Dialog tạo thư mục -->
-  <p-dialog
-    header="Tạo thư mục mới"
-    [(visible)]="showCreateFolderDialog"
-    [modal]="true"
-    [style]="{ width: '450px' }"
-  >
-    <div class="field mb-4">
-      <label for="folderName" class="block mb-2">Tên thư mục</label>
-      <input
-        id="folderName"
-        type="text"
-        pInputText
-        [(ngModel)]="newFolderName"
-        class="w-full"
-        autofocus
-        (keyup.enter)="createFolder()"
-      />
-    </div>
-    <ng-template pTemplate="footer">
-      <button
-        pButton
-        type="button"
-        label="Hủy"
-        class="p-button-text"
-        (click)="showCreateFolderDialog = false"
-      ></button>
-      <button
-        pButton
-        type="button"
-        label="Tạo"
-        (click)="createFolder()"
-      ></button>
-    </ng-template>
-  </p-dialog>
 
   <!-- Dialog đổi tên -->
   <p-dialog
@@ -288,19 +233,6 @@
     </ng-template>
   </p-dialog>
 
-  <!-- Dialog tải lên -->
-  <p-dialog
-    header="Tải lên tệp tin"
-    [(visible)]="showUploadDialog"
-    [modal]="true"
-    [style]="{ width: '600px' }"
-  >
-    <app-file-upload
-      [parentFolderId]="currentFolder"
-      (uploaded)="onFileUploaded()"
-      (cancel)="showUploadDialog = false"
-    ></app-file-upload>
-  </p-dialog>
 
   <!-- Dialog xem chi tiết file -->
   <p-dialog

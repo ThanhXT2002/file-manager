@@ -300,69 +300,71 @@
       class="bg-white dark:bg-gray-800 px-4 py-3 flex items-center justify-between border-t border-gray-200 dark:border-gray-700 sm:px-6 rounded-b-lg"
       *ngIf="shouldPaginate"
     >
-      <!-- Thay thế nội dung pagination bằng thiết kế mới -->
-      <div class="flex items-center justify-between w-full">
-        <!-- Items per page dropdown -->
-        <div class="flex items-center space-x-2">
-          <span class="text-sm text-gray-700 dark:text-gray-300">Items per page:</span>
-          <div class="relative">
-            <select
-              [ngModel]="pageSize"
-              (ngModelChange)="onPageSizeChange($event)"
-              class="appearance-none bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 py-1 px-3 pr-8 rounded-md focus:outline-none focus:ring-primary focus:border-primary cursor-pointer text-sm"
-            >
-              <option *ngFor="let size of pageSizeOptions" [value]="size">{{ size }}</option>
-            </select>
 
+      <div class="flex flex-col md:flex-row justify-between items-center w-full gap-2">
+        <!-- Left section with items per page and page info -->
+        <div class="flex items-center justify-between space-x-4 w-full">
+          <!-- Items per page dropdown -->
+          <div class="flex items-center space-x-2">
+            <span class="text-sm text-gray-700 dark:text-gray-300">Items per page:</span>
+            <div class="relative">
+              <select
+                [ngModel]="pageSize"
+                (ngModelChange)="onPageSizeChange($event)"
+                class="appearance-none bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 py-1 px-3 pr-8 rounded-md focus:outline-none focus:ring-primary focus:border-primary cursor-pointer text-sm"
+              >
+                <option *ngFor="let size of pageSizeOptions" [value]="size">{{ size }}</option>
+              </select>
+            </div>
           </div>
-        </div>
 
-        <!-- Page info -->
-        <div class="text-sm text-gray-700 dark:text-gray-300">
-          {{ (currentPage - 1) * pageSize + 1 }} – {{ Math.min(currentPage * pageSize, totalRecords) }} of {{ totalRecords }}
+          <!-- Page info -->
+          <div class="text-sm text-gray-700 dark:text-gray-300">
+            {{ (currentPage - 1) * pageSize + 1 }} – {{ Math.min(currentPage * pageSize, totalRecords) }} of {{ totalRecords }}
+          </div>
+          <div class="hidden md:block"></div>
         </div>
 
         <!-- Navigation buttons -->
         <div class="flex items-center space-x-1">
           <!-- First page -->
           <p-button
-           [disabled]="currentPage === 1"
+            [disabled]="currentPage === 1"
             icon="pi pi-angle-double-left"
             (onClick)="onPageChange({ page: 1})"
             [rounded]="true"
             [text]="true"
-
-            styleClass=" border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            styleClass="border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
           />
 
           <!-- Previous page -->
           <p-button
-           [disabled]="currentPage === 1"
+            [disabled]="currentPage === 1"
             icon="pi pi-angle-left"
             (onClick)="onPageChange({ page: currentPage - 1 })"
             [rounded]="true"
             [text]="true"
-            styleClass=" border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            styleClass="border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
           />
 
           <!-- Next page -->
           <p-button
-          [disabled]="currentPage >= getTotalPages()"
+            [disabled]="currentPage >= getTotalPages()"
             icon="pi pi-angle-right"
             (onClick)="onPageChange({ page: currentPage + 1 })"
             [rounded]="true"
             [text]="true"
-            styleClass=" border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            styleClass="border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
           />
 
           <!-- Last page -->
-           <p-button
-           [disabled]="currentPage >= getTotalPages()"
+          <p-button
+            [disabled]="currentPage >= getTotalPages()"
             icon="pi pi-angle-double-right"
             (onClick)="onPageChange({ page: getTotalPages() })"
             [rounded]="true"
             [text]="true"
-            styleClass=" border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            styleClass="border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
           />
         </div>
       </div>

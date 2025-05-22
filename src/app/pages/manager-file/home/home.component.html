@@ -72,9 +72,9 @@
       </div>
 
       <!-- Table Header - FIXED -->
-      <div class="overflow-x-auto bg-gray-50 dark:bg-gray-700">
+      <div class=" bg-gray-50 dark:bg-gray-700 overflow-x-auto overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 max-h-[calc(100vh-300px)] md:max-h-[calc(100vh-250px)]">
         <table class="min-w-full">
-          <thead>
+          <thead class="sticky top-0 z-10 bg-gray-50 dark:bg-gray-700">
             <tr>
               <!-- Select all checkbox -->
               <th scope="col" class="w-10 px-3 py-3.5 text-center">
@@ -120,15 +120,6 @@
               </th>
             </tr>
           </thead>
-        </table>
-      </div>
-
-      <!-- Table Body - SCROLLABLE ONLY HERE -->
-      <div
-        class="overflow-x-auto overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 max-h-[calc(100vh-340px)] md:max-h-[calc(100vh-290px)]"
-
-      >
-        <table class="min-w-full">
           <tbody class="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
             <!-- Data rows -->
             <tr
@@ -299,6 +290,9 @@
           </tbody>
         </table>
       </div>
+
+      <!-- Table Body - SCROLLABLE ONLY HERE -->
+
     </div>
 
     <!-- Footer/Pagination - FIXED -->

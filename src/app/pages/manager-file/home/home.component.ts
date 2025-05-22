@@ -52,13 +52,20 @@ import { Subscription } from 'rxjs';
   styleUrl: './home.component.scss',
 })
 export class HomeComponent extends BasicPage {
+
+  private readonly PAGINATION_THRESHOLD = 20; // Ngưỡng bắt đầu phân trang
+  public readonly ITEMS_PER_PAGE = 20; // Số items mỗi trang khi phân trang
+
+  // Thêm mảng chứa các tùy chọn số lượng item trên trang
+  public readonly pageSizeOptions = [20, 40, 80, 120];
+
   fileList: FileModel[] = [];
   currentFolder?: number;
   breadcrumbItems: { id?: number; name: string }[] = [];
   loading = false;
   totalRecords = 0;
   currentPage = 1;
-  pageSize = 1000;
+  pageSize = 20;
   shouldPaginate = false;
   searchTerm = '';
 
@@ -234,14 +241,45 @@ export class HomeComponent extends BasicPage {
 
 
   // Các phương thức để tải dữ liệu theo các mode khác nhau
-  loadTrashFiles() {
+   loadTrashFiles() {
     this.loading = true;
+
+    // Kiểm tra số lượng trước
+    const checkSize = this.PAGINATION_THRESHOLD + 1;
+
+    this.fileService
+      .getDeletedFiles(1, checkSize)
+      .subscribe({
+        next: (response) => {
+          this.totalRecords = response.data?.totalCount || 0;
+
+          if (this.totalRecords <= this.PAGINATION_THRESHOLD) {
+            // Không phân trang
+            this.shouldPaginate = false;
+            this.pageSize = this.totalRecords;
+            this.fileList = response.data?.items || [];
+            this.loading = false;
+          } else {
+            // Có phân trang
+            this.shouldPaginate = true;
+            // Giữ nguyên pageSize hiện tại nếu đã được thiết lập
+            this.loadPagedTrashFiles();
+          }
+        },
+        error: (error) => {
+          this.handleError(error);
+        },
+      });
+  }
+
+  private loadPagedTrashFiles(): void {
+    this.loading = true;
+
     this.fileService
       .getDeletedFiles(this.currentPage, this.pageSize)
       .subscribe({
         next: (response) => {
           this.fileList = response.data?.items || [];
-          this.totalRecords = response.data?.totalCount || 0;
           this.loading = false;
         },
         error: (error) => {
@@ -252,12 +290,42 @@ export class HomeComponent extends BasicPage {
 
   loadFavoriteFiles() {
     this.loading = true;
+
+    const checkSize = this.PAGINATION_THRESHOLD + 1;
+
+    this.fileService
+      .getFavoriteFiles(1, checkSize)
+      .subscribe({
+        next: (response) => {
+          this.totalRecords = response.data?.totalCount || 0;
+
+          if (this.totalRecords <= this.PAGINATION_THRESHOLD) {
+            // Không phân trang
+            this.shouldPaginate = false;
+            this.pageSize = this.totalRecords;
+            this.fileList = response.data?.items || [];
+            this.loading = false;
+          } else {
+            // Có phân trang
+            this.shouldPaginate = true;
+            // Giữ nguyên pageSize hiện tại nếu đã được thiết lập
+            this.loadPagedFavoriteFiles();
+          }
+        },
+        error: (error) => {
+          this.handleError(error);
+        },
+      });
+  }
+
+  private loadPagedFavoriteFiles(): void {
+    this.loading = true;
+
     this.fileService
       .getFavoriteFiles(this.currentPage, this.pageSize)
       .subscribe({
         next: (response) => {
           this.fileList = response.data?.items || [];
-          this.totalRecords = response.data?.totalCount || 0;
           this.loading = false;
         },
         error: (error) => {
@@ -269,30 +337,28 @@ export class HomeComponent extends BasicPage {
   loadFiles(): void {
     this.loading = true;
 
-    // Sử dụng một giá trị đủ lớn cho pageSize khi chưa biết nếu cần phân trang hay không
-    const initialPageSize = 1000; // Hoặc một giá trị lớn hơn theo nhu cầu
+    // Bước 1: Load một lượng lớn để kiểm tra totalRecords
+    const checkSize = this.PAGINATION_THRESHOLD + 1;
 
     this.fileService
-      .getFiles(this.currentFolder, 1, initialPageSize)
+      .getFiles(this.currentFolder, 1, checkSize)
       .subscribe({
         next: (response) => {
-          this.fileList = response.data?.items || [];
           this.totalRecords = response.data?.totalCount || 0;
 
-          // Quyết định nếu cần phân trang sau khi đã có dữ liệu
-          this.shouldPaginate = this.totalRecords > 1000;
-
-          // Nếu cần phân trang và tổng số bản ghi lớn hơn số đã tải
-          // thì mới cần tải lại theo trang (hiếm khi xảy ra)
-          if (this.shouldPaginate && this.totalRecords > initialPageSize) {
-            // Trong trường hợp rất hiếm khi có nhiều hơn 1000 items,
-            // và ta cần hiển thị trang khác với trang đầu tiên
-            if (this.currentPage > 1) {
-              this.loadPagedItems();
-            }
+          // Bước 2: Quyết định có phân trang hay không
+          if (this.totalRecords <= this.PAGINATION_THRESHOLD) {
+            // Không phân trang - load tất cả
+            this.shouldPaginate = false;
+            this.pageSize = this.totalRecords; // Set pageSize = tổng số items
+            this.fileList = response.data?.items || [];
+            this.loading = false;
+          } else {
+            // Có phân trang - load theo trang
+            this.shouldPaginate = true;
+            // Giữ nguyên pageSize hiện tại nếu đã được thiết lập
+            this.loadPagedItems(); // Load trang đầu tiên với pageSize
           }
-
-          this.loading = false;
         },
         error: (error) => {
           this.handleError(error);
@@ -303,6 +369,7 @@ export class HomeComponent extends BasicPage {
   // Phương thức này chỉ được gọi khi cần chuyển trang và có hơn 1000 items
   loadPagedItems(): void {
     this.loading = true;
+
     this.fileService
       .getFiles(this.currentFolder, this.currentPage, this.pageSize)
       .subscribe({
@@ -551,12 +618,22 @@ export class HomeComponent extends BasicPage {
   }
 
   // Xử lý sự kiện thay đổi trang
-  onPageChange(event: any): void {
-    this.currentPage = event.page + 1;
-    // Chỉ gọi loadPagedItems khi đang ở chế độ phân trang
-    if (this.shouldPaginate) {
-      this.loadPagedItems();
+onPageChange(event: any): void {
+    // Chỉ xử lý khi đang trong chế độ phân trang
+    if (!this.shouldPaginate) {
+      return;
     }
+
+    if (typeof event.page === 'number') {
+      this.currentPage = event.page;
+    }
+
+    // Đảm bảo currentPage trong giới hạn hợp lệ
+    const maxPage = Math.ceil(this.totalRecords / this.ITEMS_PER_PAGE);
+    this.currentPage = Math.max(1, Math.min(this.currentPage, maxPage));
+
+    // Load data cho trang mới
+    this.loadPagedItems();
   }
 
   // Tìm kiếm file
@@ -567,6 +644,42 @@ export class HomeComponent extends BasicPage {
     }
 
     this.loading = true;
+
+    const checkSize = this.PAGINATION_THRESHOLD + 1;
+
+    this.fileService
+      .searchFiles({ searchTerm: keyword.trim() }, 1, checkSize)
+      .subscribe({
+        next: (response) => {
+          this.totalRecords = response.data?.totalCount || 0;
+
+          if (this.totalRecords <= this.PAGINATION_THRESHOLD) {
+            // Không phân trang
+            this.shouldPaginate = false;
+            this.pageSize = this.totalRecords;
+            this.fileList = response.data?.items || [];
+            this.loading = false;
+          } else {
+            // Có phân trang
+            this.shouldPaginate = true;
+            // Giữ nguyên pageSize hiện tại nếu đã được thiết lập
+            this.loadPagedSearchResults(keyword);
+          }
+        },
+        error: (error) => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Lỗi',
+            detail: 'Không thể tìm kiếm tệp tin',
+          });
+          this.loading = false;
+        },
+      });
+  }
+
+  private loadPagedSearchResults(keyword: string): void {
+    this.loading = true;
+
     this.fileService
       .searchFiles(
         { searchTerm: keyword.trim() },
@@ -576,7 +689,6 @@ export class HomeComponent extends BasicPage {
       .subscribe({
         next: (response) => {
           this.fileList = response.data?.items || [];
-          this.totalRecords = response.data?.totalCount || 0;
           this.loading = false;
         },
         error: (error) => {
@@ -589,6 +701,7 @@ export class HomeComponent extends BasicPage {
         },
       });
   }
+
 
   // Phương thức khôi phục file từ thùng rác
   restoreFile(file: FileModel): void {
@@ -730,7 +843,7 @@ get Math() {
 // Get pages for pagination
 getPages(): number[] {
   const totalPages = Math.ceil(this.totalRecords / this.pageSize);
-  const visiblePages = 5; // Number of page buttons to show
+  const visiblePages = 5;
 
   let startPage = Math.max(1, this.currentPage - Math.floor(visiblePages / 2));
   let endPage = startPage + visiblePages - 1;
@@ -742,6 +855,16 @@ getPages(): number[] {
 
   return Array.from({length: (endPage - startPage + 1)}, (_, i) => startPage + i);
 }
+
+// Helper method để get total pages (cho template)
+  getTotalPages(): number {
+    return this.shouldPaginate ? Math.ceil(this.totalRecords / this.pageSize) : 1;
+  }
+
+  // Helper method để check current page validity
+  isValidPage(page: number): boolean {
+    return page >= 1 && page <= this.getTotalPages();
+  }
 
   override ngOnDestroy() {
     // Hủy đăng ký lắng nghe khi component bị hủy
@@ -775,5 +898,25 @@ getPages(): number[] {
   unstarredAll() {
     console.log('Loại bỏ tất cả khỏi yêu thích');
     // Logic loại bỏ tất cả khỏi yêu thích
+  }
+
+  // Phương thức xử lý khi người dùng thay đổi pageSize
+  onPageSizeChange(newPageSize: number): void {
+    if (this.pageSize !== newPageSize) {
+      this.pageSize = newPageSize;
+      // Reset về trang 1 khi thay đổi số lượng item hiển thị
+      this.currentPage = 1;
+
+      // Tải lại dữ liệu với pageSize mới
+      if (this.currentMode === 'trash') {
+        this.loadPagedTrashFiles();
+      } else if (this.currentMode === 'favorites') {
+        this.loadPagedFavoriteFiles();
+      } else if (this.currentMode === 'search') {
+        this.loadPagedSearchResults(this.searchTerm);
+      } else {
+        this.loadPagedItems();
+      }
+    }
   }
 }

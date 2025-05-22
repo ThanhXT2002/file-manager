@@ -1,8 +1,6 @@
 <div class="px-1">
   <!-- Danh sách tệp tin -->
-  <div
-    class="overflow-x-auto bg-white dark:bg-gray-800 rounded-lg shadow-xl border-2 border-primary"
-  >
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl border-2 border-primary">
     <!-- Loading overlay -->
     <div class="relative">
       <div
@@ -17,8 +15,8 @@
         </div>
       </div>
 
-      <!-- Table -->
-      <div class="flex__between px-3 py-2">
+      <!-- Header Section - FIXED -->
+      <div class="flex__between px-3 py-2 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 rounded-t-lg">
         <div>
           <h1 class="text-xl font-semibold">
             <ng-container *ngIf="currentMode === 'files'">
@@ -57,7 +55,7 @@
             *ngIf="isShowBoxFunction"
             (click)="$event.stopPropagation()"
             (mouseleave)="isShowBoxFunction = false"
-            class="absolute right-0 top-10 bg-white dark:bg-gray-800 border border-primary shadow-lg rounded-md w-fit"
+            class="absolute right-0 top-10 bg-white dark:bg-gray-800 border border-primary shadow-lg rounded-md w-fit z-20"
           >
             <ul class="list-none p-2 m-0">
               <li
@@ -72,305 +70,318 @@
           </div>
         </div>
       </div>
-      <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-        <thead class="bg-gray-50 dark:bg-gray-700">
-          <tr>
-            <!-- Select all checkbox -->
-            <th scope="col" class="w-10 px-3 py-3.5 text-center">
-              <div class="flex items-center justify-center">
-                <input
-                  type="checkbox"
-                  [checked]="areAllFilesSelected()"
-                  (change)="toggleSelectAll()"
-                  class="h-4 w-4 text-primary rounded border-gray-300 dark:border-gray-600 focus:ring-primary focus:ring-offset-gray-800"
-                />
-              </div>
-            </th>
-            <th scope="col" class="w-12 px-3 py-3.5"></th>
-            <th
-              scope="col"
-              class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white"
+
+      <!-- Table Header - FIXED -->
+      <div class="overflow-x-auto bg-gray-50 dark:bg-gray-700">
+        <table class="min-w-full">
+          <thead>
+            <tr>
+              <!-- Select all checkbox -->
+              <th scope="col" class="w-10 px-3 py-3.5 text-center">
+                <div class="flex items-center justify-center">
+                  <input
+                    type="checkbox"
+                    [checked]="areAllFilesSelected()"
+                    (change)="toggleSelectAll()"
+                    class="h-4 w-4 text-primary rounded border-gray-300 dark:border-gray-600 focus:ring-primary focus:ring-offset-gray-800"
+                  />
+                </div>
+              </th>
+              <th scope="col" class="w-12 px-3 py-3.5"></th>
+              <th
+                scope="col"
+                class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white"
+              >
+                Name
+              </th>
+              <th
+                scope="col"
+                class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white w-40"
+              >
+                Size
+              </th>
+              <th
+                scope="col"
+                class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white w-40"
+              >
+                Type
+              </th>
+              <th
+                scope="col"
+                class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white w-40"
+              >
+                Last Modified
+              </th>
+              <th
+                scope="col"
+                class="px-3 py-3.5 text-right text-sm font-semibold text-gray-900 dark:text-white w-40"
+              >
+                Actions
+              </th>
+            </tr>
+          </thead>
+        </table>
+      </div>
+
+      <!-- Table Body - SCROLLABLE ONLY HERE -->
+      <div
+        class="overflow-x-auto overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 max-h-[calc(100vh-340px)] md:max-h-[calc(100vh-290px)]"
+
+      >
+        <table class="min-w-full">
+          <tbody class="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
+            <!-- Data rows -->
+            <tr
+              *ngFor="let file of fileList"
+              (dblclick)="handleDoubleClick(file)"
+              class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer"
             >
-              Name
-            </th>
-            <th
-              scope="col"
-              class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white w-40"
-            >
-              Size
-            </th>
-            <th
-              scope="col"
-              class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white w-40"
-            >
-              Type
-            </th>
-            <th
-              scope="col"
-              class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white w-40"
-            >
-              Last Modified
-            </th>
-            <th
-              scope="col"
-              class="px-3 py-3.5 text-right text-sm font-semibold text-gray-900 dark:text-white w-40"
-            >
-              Actions
-            </th>
-          </tr>
-        </thead>
-        <tbody
-          class="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800"
-        >
-          <!-- Data rows -->
-          <tr
-            *ngFor="let file of fileList"
-            (dblclick)="handleDoubleClick(file)"
-            class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer"
-          >
-            <!-- Row checkbox -->
-            <td
-              class="px-3 py-2.5 whitespace-nowrap text-center"
-              (click)="$event.stopPropagation()"
-            >
-              <div class="flex items-center justify-center">
-                <input
-                  type="checkbox"
-                  [checked]="isFileSelected(file)"
-                  (change)="toggleFileSelection(file)"
-                  class="h-4 w-4 text-primary rounded border-gray-300 dark:border-gray-600 focus:ring-primary focus:ring-offset-gray-800"
-                />
-              </div>
-            </td>
-            <td class="px-3 py-2.5 whitespace-nowrap">
-              <i
-                [ngClass]="
-                  file.type === FileType.Folder
-                    ? 'pi pi-folder text-yellow-500'
-                    : 'pi pi-file text-blue-500'
-                "
-                class="text-xl"
-              ></i>
-            </td>
-            <td class="px-3 py-2.5 whitespace-nowrap">
-              <div class="text-sm font-medium text-gray-900 dark:text-white">
-                {{ file.name }}
-              </div>
-            </td>
-            <td class="px-3 py-2.5 whitespace-nowrap">
-              <div class="text-sm text-gray-500 dark:text-gray-400">
-                {{ file.type === FileType.Folder ? "-" : file.formattedSize }}
-              </div>
-            </td>
-            <td class="px-3 py-2.5 whitespace-nowrap">
-              <div class="text-sm text-gray-500 dark:text-gray-400">
-                {{
-                  file.type === FileType.Folder
-                    ? "Thư mục"
-                    : file.extension || "Tệp tin"
-                }}
-              </div>
-            </td>
-            <td class="px-3 py-2.5 whitespace-nowrap">
-              <div class="text-sm text-gray-500 dark:text-gray-400">
-                {{ file.updatedAt | date : "dd/MM/yyyy HH:mm" }}
-              </div>
-            </td>
-            <td class="px-3 py-2.5 whitespace-nowrap text-right">
-              <div class="flex gap-1 justify-end">
-                <!-- Files mode actions -->
-                <ng-container
-                  *ngIf="currentMode === 'files' || currentMode === 'search'"
-                >
-                  <button
-                    type="button"
-                    class="text-gray-400 hover:text-blue-600 focus:outline-none p-1.5 rounded-full hover:bg-blue-50 transition-colors"
-                    (click)="openRenameDialog(file)"
-                    title="Đổi tên"
+              <!-- Row checkbox -->
+              <td
+                class="px-3 py-2.5 whitespace-nowrap text-center w-10"
+                (click)="$event.stopPropagation()"
+              >
+                <div class="flex items-center justify-center">
+                  <input
+                    type="checkbox"
+                    [checked]="isFileSelected(file)"
+                    (change)="toggleFileSelection(file)"
+                    class="h-4 w-4 text-primary rounded border-gray-300 dark:border-gray-600 focus:ring-primary focus:ring-offset-gray-800"
+                  />
+                </div>
+              </td>
+              <td class="px-3 py-2.5 whitespace-nowrap w-12">
+                <i
+                  [ngClass]="
+                    file.type === FileType.Folder
+                      ? 'pi pi-folder text-yellow-500'
+                      : 'pi pi-file text-blue-500'
+                  "
+                  class="text-xl"
+                ></i>
+              </td>
+              <td class="px-3 py-2.5 whitespace-nowrap">
+                <div class="text-sm font-medium text-gray-900 dark:text-white">
+                  {{ file.name }}
+                </div>
+              </td>
+              <td class="px-3 py-2.5 whitespace-nowrap w-40">
+                <div class="text-sm text-gray-500 dark:text-gray-400">
+                  {{ file.type === FileType.Folder ? "-" : file.formattedSize }}
+                </div>
+              </td>
+              <td class="px-3 py-2.5 whitespace-nowrap w-40">
+                <div class="text-sm text-gray-500 dark:text-gray-400">
+                  {{
+                    file.type === FileType.Folder
+                      ? "Thư mục"
+                      : file.extension || "Tệp tin"
+                  }}
+                </div>
+              </td>
+              <td class="px-3 py-2.5 whitespace-nowrap w-40">
+                <div class="text-sm text-gray-500 dark:text-gray-400">
+                  {{ file.updatedAt | date : "dd/MM/yyyy HH:mm" }}
+                </div>
+              </td>
+              <td class="px-3 py-2.5 whitespace-nowrap text-right w-40">
+                <div class="flex gap-1 justify-end">
+                  <!-- Files mode actions -->
+                  <ng-container
+                    *ngIf="currentMode === 'files' || currentMode === 'search'"
                   >
-                    <i class="pi pi-pencil"></i>
-                  </button>
-                  <button
-                    type="button"
-                    [ngClass]="
-                      file.isFavorite
-                        ? 'text-yellow-500 hover:text-yellow-600'
-                        : 'text-gray-400 hover:text-yellow-500'
-                    "
-                    class="focus:outline-none p-1.5 rounded-full hover:bg-yellow-50 transition-colors"
-                    (click)="toggleFavorite(file, $event)"
-                    title="Yêu thích"
-                  >
-                    <i
+                    <button
+                      type="button"
+                      class="text-gray-400 hover:text-blue-600 focus:outline-none p-1.5 rounded-full hover:bg-blue-50 transition-colors"
+                      (click)="openRenameDialog(file)"
+                      title="Đổi tên"
+                    >
+                      <i class="pi pi-pencil"></i>
+                    </button>
+                    <button
+                      type="button"
                       [ngClass]="
-                        file.isFavorite ? 'pi pi-star-fill' : 'pi pi-star'
+                        file.isFavorite
+                          ? 'text-yellow-500 hover:text-yellow-600'
+                          : 'text-gray-400 hover:text-yellow-500'
                       "
-                    ></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="text-gray-400 hover:text-red-600 focus:outline-none p-1.5 rounded-full hover:bg-red-50 transition-colors"
-                    (click)="confirmDelete(file)"
-                    title="Xóa"
-                  >
-                    <i class="pi pi-trash"></i>
-                  </button>
-                </ng-container>
-
-                <!-- Trash mode actions -->
-                <ng-container *ngIf="currentMode === 'trash'">
-                  <button
-                    type="button"
-                    class="text-gray-400 hover:text-green-600 focus:outline-none p-1.5 rounded-full hover:bg-green-50 transition-colors"
-                    (click)="restoreFile(file)"
-                    title="Khôi phục"
-                  >
-                    <i class="pi pi-replay"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="text-gray-400 hover:text-red-600 focus:outline-none p-1.5 rounded-full hover:bg-red-50 transition-colors"
-                    (click)="confirmPermanentDelete(file)"
-                    title="Xóa vĩnh viễn"
-                  >
-                    <i class="pi pi-times"></i>
-                  </button>
-                </ng-container>
-
-                <!-- Favorites mode actions -->
-                <ng-container *ngIf="currentMode === 'favorites'">
-                  <button
-                    type="button"
-                    class="text-gray-400 hover:text-blue-600 focus:outline-none p-1.5 rounded-full hover:bg-blue-50 transition-colors"
-                    (click)="openRenameDialog(file)"
-                    title="Đổi tên"
-                  >
-                    <i class="pi pi-pencil"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="text-yellow-500 hover:text-yellow-600 focus:outline-none p-1.5 rounded-full hover:bg-yellow-50 transition-colors"
-                    (click)="toggleFavorite(file, $event)"
-                    title="Bỏ yêu thích"
-                  >
-                    <i class="pi pi-star-fill"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="text-gray-400 hover:text-red-600 focus:outline-none p-1.5 rounded-full hover:bg-red-50 transition-colors"
-                    (click)="confirmDelete(file)"
-                    title="Xóa"
-                  >
-                    <i class="pi pi-trash"></i>
-                  </button>
-                </ng-container>
-              </div>
-            </td>
-          </tr>
-
-          <!-- Empty state -->
-          <tr *ngIf="fileList.length === 0 && !loading">
-            <td colspan="7" class="px-3 py-10 text-center">
-              <div class="flex flex-col items-center justify-center">
-                <i class="pi pi-folder-open text-5xl text-gray-300 mb-2"></i>
-                <span class="text-gray-500">
-                  <!-- Different messages based on mode -->
-                  <ng-container *ngIf="currentMode === 'files'">
-                    Không có tệp tin nào trong thư mục này
+                      class="focus:outline-none p-1.5 rounded-full hover:bg-yellow-50 transition-colors"
+                      (click)="toggleFavorite(file, $event)"
+                      title="Yêu thích"
+                    >
+                      <i
+                        [ngClass]="
+                          file.isFavorite ? 'pi pi-star-fill' : 'pi pi-star'
+                        "
+                      ></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="text-gray-400 hover:text-red-600 focus:outline-none p-1.5 rounded-full hover:bg-red-50 transition-colors"
+                      (click)="confirmDelete(file)"
+                      title="Xóa"
+                    >
+                      <i class="pi pi-trash"></i>
+                    </button>
                   </ng-container>
+
+                  <!-- Trash mode actions -->
                   <ng-container *ngIf="currentMode === 'trash'">
-                    Thùng rác trống
+                    <button
+                      type="button"
+                      class="text-gray-400 hover:text-green-600 focus:outline-none p-1.5 rounded-full hover:bg-green-50 transition-colors"
+                      (click)="restoreFile(file)"
+                      title="Khôi phục"
+                    >
+                      <i class="pi pi-replay"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="text-gray-400 hover:text-red-600 focus:outline-none p-1.5 rounded-full hover:bg-red-50 transition-colors"
+                      (click)="confirmPermanentDelete(file)"
+                      title="Xóa vĩnh viễn"
+                    >
+                      <i class="pi pi-times"></i>
+                    </button>
                   </ng-container>
+
+                  <!-- Favorites mode actions -->
                   <ng-container *ngIf="currentMode === 'favorites'">
-                    Bạn chưa đánh dấu tệp tin nào là yêu thích
+                    <button
+                      type="button"
+                      class="text-gray-400 hover:text-blue-600 focus:outline-none p-1.5 rounded-full hover:bg-blue-50 transition-colors"
+                      (click)="openRenameDialog(file)"
+                      title="Đổi tên"
+                    >
+                      <i class="pi pi-pencil"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="text-yellow-500 hover:text-yellow-600 focus:outline-none p-1.5 rounded-full hover:bg-yellow-50 transition-colors"
+                      (click)="toggleFavorite(file, $event)"
+                      title="Bỏ yêu thích"
+                    >
+                      <i class="pi pi-star-fill"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="text-gray-400 hover:text-red-600 focus:outline-none p-1.5 rounded-full hover:bg-red-50 transition-colors"
+                      (click)="confirmDelete(file)"
+                      title="Xóa"
+                    >
+                      <i class="pi pi-trash"></i>
+                    </button>
                   </ng-container>
-                </span>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Empty state -->
+            <tr *ngIf="fileList.length === 0 && !loading" >
+              <td colspan="7" class="px-3 py-10 text-center rounded-b-lg">
+                <div class="flex flex-col items-center justify-center">
+                  <i class="pi pi-folder-open text-5xl text-gray-300 mb-2"></i>
+                  <span class="text-gray-500">
+                    <!-- Different messages based on mode -->
+                    <ng-container *ngIf="currentMode === 'files'">
+                      Không có tệp tin nào trong thư mục này
+                    </ng-container>
+                    <ng-container *ngIf="currentMode === 'trash'">
+                      Thùng rác trống
+                    </ng-container>
+                    <ng-container *ngIf="currentMode === 'favorites'">
+                      Bạn chưa đánh dấu tệp tin nào là yêu thích
+                    </ng-container>
+                  </span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
-    <!-- Pagination -->
+    <!-- Footer/Pagination - FIXED -->
     <div
-      class="bg-white dark:bg-gray-800 px-4 py-3 flex items-center justify-between border-t border-gray-200 dark:border-gray-700 sm:px-6"
+      class="bg-white dark:bg-gray-800 px-4 py-3 flex items-center justify-between border-t border-gray-200 dark:border-gray-700 sm:px-6 rounded-b-lg"
       *ngIf="shouldPaginate"
     >
-      <div class="flex-1 flex justify-between sm:hidden">
-        <button
-          [disabled]="currentPage === 1"
-          (click)="onPageChange({ page: currentPage - 2, rows: pageSize })"
-          class="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          Previous
-        </button>
-        <button
-          [disabled]="currentPage * pageSize >= totalRecords"
-          (click)="onPageChange({ page: currentPage, rows: pageSize })"
-          class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          Next
-        </button>
-      </div>
-      <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-        <div>
-          <p class="text-sm text-gray-700 dark:text-gray-300">
-            Showing
-            <span class="font-medium">{{
-              (currentPage - 1) * pageSize + 1
-            }}</span>
-            to
-            <span class="font-medium">{{
-              Math.min(currentPage * pageSize, totalRecords)
-            }}</span>
-            of
-            <span class="font-medium">{{ totalRecords }}</span>
-            results
-          </p>
+      <!-- Thay thế nội dung pagination bằng thiết kế mới -->
+      <div class="flex items-center justify-between w-full">
+        <!-- Items per page dropdown -->
+        <div class="flex items-center space-x-2">
+          <span class="text-sm text-gray-700 dark:text-gray-300">Items per page:</span>
+          <div class="relative">
+            <select
+              [ngModel]="pageSize"
+              (ngModelChange)="onPageSizeChange($event)"
+              class="appearance-none bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 py-1 px-3 pr-8 rounded-md focus:outline-none focus:ring-primary focus:border-primary cursor-pointer text-sm"
+            >
+              <option *ngFor="let size of pageSizeOptions" [value]="size">{{ size }}</option>
+            </select>
+
+          </div>
         </div>
-        <div>
-          <nav
-            class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
-            aria-label="Pagination"
-          >
-            <!-- Previous page -->
-            <button
-              [disabled]="currentPage === 1"
-              (click)="onPageChange({ page: currentPage - 2, rows: pageSize })"
-              class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <span class="sr-only">Previous</span>
-              <i class="pi pi-chevron-left"></i>
-            </button>
 
-            <!-- Page numbers -->
-            <ng-container *ngFor="let page of getPages()">
-              <button
-                (click)="onPageChange({ page: page - 1, rows: pageSize })"
-                [ngClass]="
-                  page === currentPage
-                    ? 'z-10 bg-primary dark:bg-primary border-primary dark:border-primary text-white dark:text-white'
-                    : 'bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-600'
-                "
-                class="relative inline-flex items-center px-4 py-2 border text-sm font-medium"
-              >
-                {{ page }}
-              </button>
-            </ng-container>
+        <!-- Page info -->
+        <div class="text-sm text-gray-700 dark:text-gray-300">
+          {{ (currentPage - 1) * pageSize + 1 }} – {{ Math.min(currentPage * pageSize, totalRecords) }} of {{ totalRecords }}
+        </div>
 
-            <!-- Next page -->
-            <button
-              [disabled]="currentPage * pageSize >= totalRecords"
-              (click)="onPageChange({ page: currentPage, rows: pageSize })"
-              class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <span class="sr-only">Next</span>
-              <i class="pi pi-chevron-right"></i>
-            </button>
-          </nav>
+        <!-- Navigation buttons -->
+        <div class="flex items-center space-x-1">
+          <!-- First page -->
+          <p-button
+           [disabled]="currentPage === 1"
+            icon="pi pi-angle-double-left"
+            (onClick)="onPageChange({ page: 1})"
+            [rounded]="true"
+            [text]="true"
+
+            styleClass=" border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          />
+
+          <!-- Previous page -->
+          <p-button
+           [disabled]="currentPage === 1"
+            icon="pi pi-angle-left"
+            (onClick)="onPageChange({ page: currentPage - 1 })"
+            [rounded]="true"
+            [text]="true"
+            styleClass=" border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          />
+
+          <!-- Next page -->
+          <p-button
+          [disabled]="currentPage >= getTotalPages()"
+            icon="pi pi-angle-right"
+            (onClick)="onPageChange({ page: currentPage + 1 })"
+            [rounded]="true"
+            [text]="true"
+            styleClass=" border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          />
+
+          <!-- Last page -->
+           <p-button
+           [disabled]="currentPage >= getTotalPages()"
+            icon="pi pi-angle-double-right"
+            (onClick)="onPageChange({ page: getTotalPages() })"
+            [rounded]="true"
+            [text]="true"
+            styleClass=" border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          />
         </div>
       </div>
+    </div>
+
+    <!-- Hiển thị thông tin khi KHÔNG phân trang -->
+    <div
+      class="bg-white dark:bg-gray-800 px-4 py-2 border-t border-gray-200 dark:border-gray-700 rounded-b-lg"
+      *ngIf="!shouldPaginate && totalRecords > 0"
+    >
+      <p class="text-sm text-gray-700 dark:text-gray-300 text-center">
+        Hiển thị tất cả {{ totalRecords }} items
+      </p>
     </div>
   </div>
 

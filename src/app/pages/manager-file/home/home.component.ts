@@ -26,7 +26,7 @@ import { BreadcrumbService } from '../../../core/service/breadcrumb.service';
 import { SearchService } from '../../../core/service/search.service';
 import { FileManagerService } from '../../../core/service/file-manager.service';
 import { Subscription } from 'rxjs';
-
+import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
   selector: 'app-home',
@@ -42,10 +42,7 @@ import { Subscription } from 'rxjs';
     ToastModule,
     TreeModule,
     MenuModule,
-    ProgressBarModule,
-    // FileListComponent,
-    FileUploadComponent,
-    FileBrowserComponent,
+    ProgressBarModule
   ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './home.component.html',
@@ -590,7 +587,7 @@ export class HomeComponent extends BasicPage {
   }
 
   toggleFavorite(file: FileModel, event: Event): void {
-    event.stopPropagation();
+
 
     if (file.isFavorite) {
       this.fileService.removeFromFavorites(file.id).subscribe({
@@ -881,6 +878,7 @@ getPages(): number[] {
   // Các action methods
   deleteAll() {
     console.log('Xóa tất cả');
+    console.log(this.selectedFiles?. map(file => file.id));
     // Logic xóa tất cả
   }
 

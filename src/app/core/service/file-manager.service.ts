@@ -11,7 +11,6 @@ import { UploadFileDialogComponent } from '../../pages/manager-file/components/u
   providedIn: 'root',
 })
 export class FileManagerService {
-  // Subject để thông báo các component khác khi có thay đổi (như tạo thư mục mới hoặc tải lên file)
   private fileChangedSubject = new Subject<void>();
   fileChanged$ = this.fileChangedSubject.asObservable();
 
@@ -37,7 +36,7 @@ export class FileManagerService {
           detail: 'Tạo thư mục thành công',
           life: 3000,
         });
-        
+
         // Thông báo cho các component khác biết rằng có thay đổi
         this.fileChangedSubject.next(); // Đảm bảo dòng này được thực thi
       } else if (result && !result.success) {

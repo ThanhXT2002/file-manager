@@ -27,6 +27,7 @@ import { SearchService } from '../../../core/service/search.service';
 import { FileManagerService } from '../../../core/service/file-manager.service';
 import { Subscription } from 'rxjs';
 
+
 @Component({
   selector: 'app-home',
   imports: [
@@ -78,6 +79,44 @@ export class HomeComponent extends BasicPage {
   currentMode: 'files' | 'trash' | 'favorites' | 'search' = 'files';
   isSearchMode = false;
   private fileChangeSubscription: Subscription | null = null;
+  selectedFiles: FileModel[] = [];
+  isShowBoxFunction = false;
+
+  menuItemFunction: Array<any> = [];
+
+  listItemFunction = {
+    deleteAll: {
+      label: 'Xóa tất cả',
+      icon: 'pi pi-trash',
+      action: () => this.deleteAll(),
+      colorClass: 'hover:bg-red-300 dark:hover:bg-red-700'
+    },
+    emptyTrash: {
+      label: 'Làm trống thùng rác',
+      icon: 'pi pi-trash-alt',
+      action: () => this.emptyTrash(),
+      colorClass: 'hover:bg-red-300 dark:hover:bg-red-700'
+    },
+    replayAll: {
+      label: 'Khôi phục tất cả',
+      icon: 'pi pi-replay',
+      action: () => this.replayAll(),
+      colorClass: 'hover:bg-green-300 dark:hover:bg-green-700'
+    },
+    starredAll: {
+      label: 'Yêu thích tất cả',
+      icon: 'pi pi-star-fill',
+      action: () => this.starredAll(),
+      colorClass: 'hover:bg-orange-300 dark:hover:bg-orange-500'
+    },
+    unstarredAll: {
+      label: 'Loại bỏ tất cả khỏi yêu thích',
+      icon: 'pi pi-star',
+      action: () => this.unstarredAll(),
+      colorClass: 'hover:bg-gray-300 dark:hover:bg-gray-700'
+    }
+  }
+
 
   constructor(
     protected override globalSer: GlobalService,
@@ -161,10 +200,38 @@ export class HomeComponent extends BasicPage {
         this.loadFiles();
       });
 
+    this.buildBoxFunction();
+
     this.createDelayObservable().subscribe(() => {
       this.pageLoaded();
     });
   }
+
+  ngOnChanges() {
+    this.buildBoxFunction();
+  }
+
+  buildBoxFunction() {
+    if(this.currentMode === 'trash'){
+      this.menuItemFunction = [
+        this.listItemFunction.emptyTrash,
+        this.listItemFunction.replayAll,
+      ];
+    }
+    else if(this.currentMode === 'favorites'){
+      this.menuItemFunction = [
+        this.listItemFunction.deleteAll,
+        this.listItemFunction.unstarredAll,
+      ];
+    }
+    else if(this.currentMode === 'files' || this.currentMode === 'search'){
+      this.menuItemFunction = [
+        this.listItemFunction.deleteAll,
+        this.listItemFunction.starredAll,
+      ];
+    }
+  }
+
 
   // Các phương thức để tải dữ liệu theo các mode khác nhau
   loadTrashFiles() {
@@ -611,11 +678,102 @@ export class HomeComponent extends BasicPage {
     });
   }
 
+// Check if a file is selected
+isFileSelected(file: FileModel): boolean {
+  return this.selectedFiles.some(f => f.id === file.id);
+}
+
+// Toggle selection of a single file
+toggleFileSelection(file: FileModel, event?: Event): void {
+  if (event) {
+    event.stopPropagation();
+  }
+
+  const index = this.selectedFiles.findIndex(f => f.id === file.id);
+  if (index === -1) {
+    this.selectedFiles.push(file);
+  } else {
+    this.selectedFiles.splice(index, 1);
+  }
+}
+
+// Check if all files on current page are selected
+areAllFilesSelected(): boolean {
+  return this.fileList.length > 0 && this.fileList.every(file => this.isFileSelected(file));
+}
+
+// Toggle selection of all files on current page
+toggleSelectAll(): void {
+  if (this.areAllFilesSelected()) {
+    // Deselect all files on current page
+    this.fileList.forEach(file => {
+      const index = this.selectedFiles.findIndex(f => f.id === file.id);
+      if (index !== -1) {
+        this.selectedFiles.splice(index, 1);
+      }
+    });
+  } else {
+    // Select all files on current page
+    this.fileList.forEach(file => {
+      if (!this.isFileSelected(file)) {
+        this.selectedFiles.push(file);
+      }
+    });
+  }
+}
+
+// Get Math object for template
+get Math() {
+  return Math;
+}
+
+// Get pages for pagination
+getPages(): number[] {
+  const totalPages = Math.ceil(this.totalRecords / this.pageSize);
+  const visiblePages = 5; // Number of page buttons to show
+
+  let startPage = Math.max(1, this.currentPage - Math.floor(visiblePages / 2));
+  let endPage = startPage + visiblePages - 1;
+
+  if (endPage > totalPages) {
+    endPage = totalPages;
+    startPage = Math.max(1, endPage - visiblePages + 1);
+  }
+
+  return Array.from({length: (endPage - startPage + 1)}, (_, i) => startPage + i);
+}
+
   override ngOnDestroy() {
     // Hủy đăng ký lắng nghe khi component bị hủy
     if (this.fileChangeSubscription) {
       this.fileChangeSubscription.unsubscribe();
       this.fileChangeSubscription = null;
     }
+  }
+
+  getItemColorClass(item: any): string {
+    return item.colorClass || 'hover:bg-gray-300 dark:hover:bg-gray-700';
+  }
+
+  // Các action methods
+  deleteAll() {
+    console.log('Xóa tất cả');
+    // Logic xóa tất cả
+  }
+
+
+  replayAll() {
+    console.log('Khôi phục tất cả');
+    // Logic khôi phục tất cả
+  }
+
+  starredAll() {
+    console.log('Yêu thích tất cả');
+    // Logic đánh dấu tất cả là yêu thích
+  }
+
+  unstarredAll() {
+    console.log('Loại bỏ tất cả khỏi yêu thích');
+    // Logic loại bỏ tất cả khỏi yêu thích
   }
 }

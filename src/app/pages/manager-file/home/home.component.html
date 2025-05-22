@@ -1,206 +1,378 @@
-  <div *ngIf="isSearchMode" class="p-3 bg-blue-50 rounded-md">
-    <div class="flex justify-between items-center">
-      <span class="text-blue-600">
-        <i class="pi pi-search mr-2"></i>
-        Kết quả tìm kiếm cho: <strong>"{{ searchTerm }}"</strong>
-      </span>
-      <span class="text-sm text-gray-500">
-        Tìm thấy {{ totalRecords }} kết quả
-      </span>
-    </div>
-  </div>
-<div class="p-4">
-
-  <!-- Header với các nút khác nhau tùy theo mode -->
-  <div class="flex justify-between items-center mb-4">
-    <!-- Title thay đổi theo mode -->
-    <h1 class="text-xl font-semibold">
-      <ng-container *ngIf="currentMode === 'files'">
-        {{ currentFolder ? "Nội dung thư mục" : "Tất cả file" }}
-      </ng-container>
-      <ng-container *ngIf="currentMode === 'trash'"> Thùng rác </ng-container>
-      <ng-container *ngIf="currentMode === 'favorites'">
-        File yêu thích
-      </ng-container>
-    </h1>
-
-
-    <!-- Buttons khác nhau theo mode -->
-    <div class="flex gap-2">
-      <!-- Nút làm trống thùng rác trong mode trash -->
-      <ng-container *ngIf="currentMode === 'trash'">
-        <button
-          pButton
-          type="button"
-          icon="pi pi-trash"
-          label="Làm trống thùng rác"
-          class="p-button-danger"
-          (click)="confirmEmptyTrash()"
-        ></button>
-      </ng-container>
-
-
-    </div>
-  </div>
-
-
-
-
+<div class="px-1">
   <!-- Danh sách tệp tin -->
-  <p-table
-    [value]="fileList"
-    [loading]="loading"
-    [paginator]="shouldPaginate"
-    [rows]="pageSize"
-    [totalRecords]="totalRecords"
-    (onPage)="onPageChange($event)"
-    styleClass="p-datatable-sm"
+  <div
+    class="overflow-x-auto bg-white dark:bg-gray-800 rounded-lg shadow-xl border-2 border-primary"
   >
-    <ng-template pTemplate="header">
-      <tr>
-        <th style="width: 3rem"></th>
-        <th>Tên</th>
-        <th style="width: 10rem">Kích thước</th>
-        <th style="width: 10rem">Loại</th>
-        <th style="width: 10rem">Ngày sửa đổi</th>
-        <th style="width: 10rem">Thao tác</th>
-        <!-- Có thể điều chỉnh độ rộng tùy theo số lượng button -->
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-file>
-      <tr
-        [ngClass]="{ 'cursor-pointer hover:bg-gray-50': true }"
-        (dblclick)="handleDoubleClick(file)"
+    <!-- Loading overlay -->
+    <div class="relative">
+      <div
+        class="absolute inset-0 bg-gray-100/75 dark:bg-gray-800/75 flex items-center justify-center z-10"
+        *ngIf="loading"
       >
-        <td>
-          <i
-            [ngClass]="
-              file.type === FileType.Folder
-                ? 'pi pi-folder text-yellow-500'
-                : 'pi pi-file text-blue-500'
-            "
-            class="text-xl"
-          >
-          </i>
-        </td>
-        <td>{{ file.name }}</td>
-        <td>{{ file.type === FileType.Folder ? "-" : file.formattedSize }}</td>
-        <td>
-          {{
-            file.type === FileType.Folder
-              ? "Thư mục"
-              : file.extension || "Tệp tin"
-          }}
-        </td>
-        <td>{{ file.updatedAt | date : "dd/MM/yyyy HH:mm" }}</td>
-        <td>
-          <!-- Các nút thao tác khác nhau tùy theo mode -->
-          <div class="flex gap-1">
-            <!-- Mode files - đầy đủ thao tác -->
-            <ng-container
-              *ngIf="currentMode === 'files' || currentMode === 'search'"
-            >
-              <button
-                pButton
-                type="button"
-                icon="pi pi-pencil"
-                class="p-button-text p-button-rounded p-button-sm"
-                (click)="openRenameDialog(file)"
-                pTooltip="Đổi tên"
-              ></button>
-              <button
-                pButton
-                type="button"
-                [icon]="file.isFavorite ? 'pi pi-star-fill' : 'pi pi-star'"
-                [ngClass]="file.isFavorite ? 'text-yellow-500' : ''"
-                class="p-button-text p-button-rounded p-button-sm"
-                (click)="toggleFavorite(file, $event)"
-                pTooltip="Yêu thích"
-              ></button>
-              <button
-                pButton
-                type="button"
-                icon="pi pi-trash"
-                class="p-button-text p-button-rounded p-button-sm p-button-danger"
-                (click)="confirmDelete(file)"
-                pTooltip="Xóa"
-              ></button>
-            </ng-container>
+        <div class="flex flex-col items-center">
+          <div
+            class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"
+          ></div>
+          <span class="mt-2 text-gray-600 dark:text-gray-300">Loading...</span>
+        </div>
+      </div>
 
-            <!-- Mode trash - khôi phục và xóa vĩnh viễn -->
+      <!-- Table -->
+      <div class="flex__between px-3 py-2">
+        <div>
+          <h1 class="text-xl font-semibold">
+            <ng-container *ngIf="currentMode === 'files'">
+              {{ currentFolder ? "Nội dung thư mục" : "Tất cả file" }}
+            </ng-container>
             <ng-container *ngIf="currentMode === 'trash'">
-              <button
-                pButton
-                type="button"
-                icon="pi pi-replay"
-                class="p-button-text p-button-rounded p-button-sm p-button-success"
-                (click)="restoreFile(file)"
-                pTooltip="Khôi phục"
-              ></button>
-              <button
-                pButton
-                type="button"
-                icon="pi pi-times"
-                class="p-button-text p-button-rounded p-button-sm p-button-danger"
-                (click)="confirmPermanentDelete(file)"
-                pTooltip="Xóa vĩnh viễn"
-              ></button>
+              Thùng rác
             </ng-container>
-
-            <!-- Mode favorites - bỏ yêu thích và các thao tác thông thường -->
             <ng-container *ngIf="currentMode === 'favorites'">
-              <button
-                pButton
-                type="button"
-                icon="pi pi-pencil"
-                class="p-button-text p-button-rounded p-button-sm"
-                (click)="openRenameDialog(file)"
-                pTooltip="Đổi tên"
-              ></button>
-              <button
-                pButton
-                type="button"
-                icon="pi pi-star-fill"
-                class="p-button-text p-button-rounded p-button-sm text-yellow-500"
-                (click)="toggleFavorite(file, $event)"
-                pTooltip="Bỏ yêu thích"
-              ></button>
-              <button
-                pButton
-                type="button"
-                icon="pi pi-trash"
-                class="p-button-text p-button-rounded p-button-sm p-button-danger"
-                (click)="confirmDelete(file)"
-                pTooltip="Xóa"
-              ></button>
+              File yêu thích
             </ng-container>
-          </div>
-        </td>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="emptymessage">
-      <tr>
-        <td colspan="6" class="text-center p-4">
-          <div class="flex flex-col items-center justify-center">
-            <i class="pi pi-folder-open text-5xl text-gray-300 mb-2"></i>
-            <span class="text-gray-500">
-              <!-- Thông báo khác nhau tùy theo mode -->
-              <ng-container *ngIf="currentMode === 'files'">
-                Không có tệp tin nào trong thư mục này
-              </ng-container>
-              <ng-container *ngIf="currentMode === 'trash'">
-                Thùng rác trống
-              </ng-container>
-              <ng-container *ngIf="currentMode === 'favorites'">
-                Bạn chưa đánh dấu tệp tin nào là yêu thích
-              </ng-container>
+          </h1>
+          @if(currentMode === 'search'){
+          <div class="flex justify-between items-center">
+            <span class="text-blue-600">
+              <i class="pi pi-search mr-2"></i>
+              Kết quả tìm kiếm cho: <strong>"{{ searchTerm }}"</strong>
             </span>
           </div>
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
+          }
+        </div>
+        <div class="flex items-center gap-2 relative">
+          @if(currentMode === 'search'){
+          <span class="text-sm text-gray-500">
+            Tìm thấy {{ totalRecords }} kết quả
+          </span>
+          }
+          <p-button
+            icon="pi pi-ellipsis-v"
+            (onClick)="isShowBoxFunction = !isShowBoxFunction"
+            [rounded]="true"
+            [text]="true"
+            severity="secondary"
+          />
+          <div
+            *ngIf="isShowBoxFunction"
+            (click)="$event.stopPropagation()"
+            (mouseleave)="isShowBoxFunction = false"
+            class="absolute right-0 top-10 bg-white dark:bg-gray-800 border border-primary shadow-lg rounded-md w-fit"
+          >
+            <ul class="list-none p-2 m-0">
+              <li
+                *ngFor="let item of menuItemFunction"
+                (click)="item.action()"
+                class="cursor-pointer p-1 px-2 rounded-md whitespace-nowrap transition-colors duration-200"
+                [ngClass]="getItemColorClass(item)"
+              >
+                <i [class]="item.icon" class="mr-2"></i>{{ item.label }}
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+        <thead class="bg-gray-50 dark:bg-gray-700">
+          <tr>
+            <!-- Select all checkbox -->
+            <th scope="col" class="w-10 px-3 py-3.5 text-center">
+              <div class="flex items-center justify-center">
+                <input
+                  type="checkbox"
+                  [checked]="areAllFilesSelected()"
+                  (change)="toggleSelectAll()"
+                  class="h-4 w-4 text-primary rounded border-gray-300 dark:border-gray-600 focus:ring-primary focus:ring-offset-gray-800"
+                />
+              </div>
+            </th>
+            <th scope="col" class="w-12 px-3 py-3.5"></th>
+            <th
+              scope="col"
+              class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white"
+            >
+              Name
+            </th>
+            <th
+              scope="col"
+              class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white w-40"
+            >
+              Size
+            </th>
+            <th
+              scope="col"
+              class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white w-40"
+            >
+              Type
+            </th>
+            <th
+              scope="col"
+              class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white w-40"
+            >
+              Last Modified
+            </th>
+            <th
+              scope="col"
+              class="px-3 py-3.5 text-right text-sm font-semibold text-gray-900 dark:text-white w-40"
+            >
+              Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody
+          class="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800"
+        >
+          <!-- Data rows -->
+          <tr
+            *ngFor="let file of fileList"
+            (dblclick)="handleDoubleClick(file)"
+            class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer"
+          >
+            <!-- Row checkbox -->
+            <td
+              class="px-3 py-2.5 whitespace-nowrap text-center"
+              (click)="$event.stopPropagation()"
+            >
+              <div class="flex items-center justify-center">
+                <input
+                  type="checkbox"
+                  [checked]="isFileSelected(file)"
+                  (change)="toggleFileSelection(file)"
+                  class="h-4 w-4 text-primary rounded border-gray-300 dark:border-gray-600 focus:ring-primary focus:ring-offset-gray-800"
+                />
+              </div>
+            </td>
+            <td class="px-3 py-2.5 whitespace-nowrap">
+              <i
+                [ngClass]="
+                  file.type === FileType.Folder
+                    ? 'pi pi-folder text-yellow-500'
+                    : 'pi pi-file text-blue-500'
+                "
+                class="text-xl"
+              ></i>
+            </td>
+            <td class="px-3 py-2.5 whitespace-nowrap">
+              <div class="text-sm font-medium text-gray-900 dark:text-white">
+                {{ file.name }}
+              </div>
+            </td>
+            <td class="px-3 py-2.5 whitespace-nowrap">
+              <div class="text-sm text-gray-500 dark:text-gray-400">
+                {{ file.type === FileType.Folder ? "-" : file.formattedSize }}
+              </div>
+            </td>
+            <td class="px-3 py-2.5 whitespace-nowrap">
+              <div class="text-sm text-gray-500 dark:text-gray-400">
+                {{
+                  file.type === FileType.Folder
+                    ? "Thư mục"
+                    : file.extension || "Tệp tin"
+                }}
+              </div>
+            </td>
+            <td class="px-3 py-2.5 whitespace-nowrap">
+              <div class="text-sm text-gray-500 dark:text-gray-400">
+                {{ file.updatedAt | date : "dd/MM/yyyy HH:mm" }}
+              </div>
+            </td>
+            <td class="px-3 py-2.5 whitespace-nowrap text-right">
+              <div class="flex gap-1 justify-end">
+                <!-- Files mode actions -->
+                <ng-container
+                  *ngIf="currentMode === 'files' || currentMode === 'search'"
+                >
+                  <button
+                    type="button"
+                    class="text-gray-400 hover:text-blue-600 focus:outline-none p-1.5 rounded-full hover:bg-blue-50 transition-colors"
+                    (click)="openRenameDialog(file)"
+                    title="Đổi tên"
+                  >
+                    <i class="pi pi-pencil"></i>
+                  </button>
+                  <button
+                    type="button"
+                    [ngClass]="
+                      file.isFavorite
+                        ? 'text-yellow-500 hover:text-yellow-600'
+                        : 'text-gray-400 hover:text-yellow-500'
+                    "
+                    class="focus:outline-none p-1.5 rounded-full hover:bg-yellow-50 transition-colors"
+                    (click)="toggleFavorite(file, $event)"
+                    title="Yêu thích"
+                  >
+                    <i
+                      [ngClass]="
+                        file.isFavorite ? 'pi pi-star-fill' : 'pi pi-star'
+                      "
+                    ></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="text-gray-400 hover:text-red-600 focus:outline-none p-1.5 rounded-full hover:bg-red-50 transition-colors"
+                    (click)="confirmDelete(file)"
+                    title="Xóa"
+                  >
+                    <i class="pi pi-trash"></i>
+                  </button>
+                </ng-container>
 
+                <!-- Trash mode actions -->
+                <ng-container *ngIf="currentMode === 'trash'">
+                  <button
+                    type="button"
+                    class="text-gray-400 hover:text-green-600 focus:outline-none p-1.5 rounded-full hover:bg-green-50 transition-colors"
+                    (click)="restoreFile(file)"
+                    title="Khôi phục"
+                  >
+                    <i class="pi pi-replay"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="text-gray-400 hover:text-red-600 focus:outline-none p-1.5 rounded-full hover:bg-red-50 transition-colors"
+                    (click)="confirmPermanentDelete(file)"
+                    title="Xóa vĩnh viễn"
+                  >
+                    <i class="pi pi-times"></i>
+                  </button>
+                </ng-container>
+
+                <!-- Favorites mode actions -->
+                <ng-container *ngIf="currentMode === 'favorites'">
+                  <button
+                    type="button"
+                    class="text-gray-400 hover:text-blue-600 focus:outline-none p-1.5 rounded-full hover:bg-blue-50 transition-colors"
+                    (click)="openRenameDialog(file)"
+                    title="Đổi tên"
+                  >
+                    <i class="pi pi-pencil"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="text-yellow-500 hover:text-yellow-600 focus:outline-none p-1.5 rounded-full hover:bg-yellow-50 transition-colors"
+                    (click)="toggleFavorite(file, $event)"
+                    title="Bỏ yêu thích"
+                  >
+                    <i class="pi pi-star-fill"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="text-gray-400 hover:text-red-600 focus:outline-none p-1.5 rounded-full hover:bg-red-50 transition-colors"
+                    (click)="confirmDelete(file)"
+                    title="Xóa"
+                  >
+                    <i class="pi pi-trash"></i>
+                  </button>
+                </ng-container>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Empty state -->
+          <tr *ngIf="fileList.length === 0 && !loading">
+            <td colspan="7" class="px-3 py-10 text-center">
+              <div class="flex flex-col items-center justify-center">
+                <i class="pi pi-folder-open text-5xl text-gray-300 mb-2"></i>
+                <span class="text-gray-500">
+                  <!-- Different messages based on mode -->
+                  <ng-container *ngIf="currentMode === 'files'">
+                    Không có tệp tin nào trong thư mục này
+                  </ng-container>
+                  <ng-container *ngIf="currentMode === 'trash'">
+                    Thùng rác trống
+                  </ng-container>
+                  <ng-container *ngIf="currentMode === 'favorites'">
+                    Bạn chưa đánh dấu tệp tin nào là yêu thích
+                  </ng-container>
+                </span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div
+      class="bg-white dark:bg-gray-800 px-4 py-3 flex items-center justify-between border-t border-gray-200 dark:border-gray-700 sm:px-6"
+      *ngIf="shouldPaginate"
+    >
+      <div class="flex-1 flex justify-between sm:hidden">
+        <button
+          [disabled]="currentPage === 1"
+          (click)="onPageChange({ page: currentPage - 2, rows: pageSize })"
+          class="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Previous
+        </button>
+        <button
+          [disabled]="currentPage * pageSize >= totalRecords"
+          (click)="onPageChange({ page: currentPage, rows: pageSize })"
+          class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Next
+        </button>
+      </div>
+      <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+        <div>
+          <p class="text-sm text-gray-700 dark:text-gray-300">
+            Showing
+            <span class="font-medium">{{
+              (currentPage - 1) * pageSize + 1
+            }}</span>
+            to
+            <span class="font-medium">{{
+              Math.min(currentPage * pageSize, totalRecords)
+            }}</span>
+            of
+            <span class="font-medium">{{ totalRecords }}</span>
+            results
+          </p>
+        </div>
+        <div>
+          <nav
+            class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
+            aria-label="Pagination"
+          >
+            <!-- Previous page -->
+            <button
+              [disabled]="currentPage === 1"
+              (click)="onPageChange({ page: currentPage - 2, rows: pageSize })"
+              class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <span class="sr-only">Previous</span>
+              <i class="pi pi-chevron-left"></i>
+            </button>
+
+            <!-- Page numbers -->
+            <ng-container *ngFor="let page of getPages()">
+              <button
+                (click)="onPageChange({ page: page - 1, rows: pageSize })"
+                [ngClass]="
+                  page === currentPage
+                    ? 'z-10 bg-primary dark:bg-primary border-primary dark:border-primary text-white dark:text-white'
+                    : 'bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-600'
+                "
+                class="relative inline-flex items-center px-4 py-2 border text-sm font-medium"
+              >
+                {{ page }}
+              </button>
+            </ng-container>
+
+            <!-- Next page -->
+            <button
+              [disabled]="currentPage * pageSize >= totalRecords"
+              (click)="onPageChange({ page: currentPage, rows: pageSize })"
+              class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <span class="sr-only">Next</span>
+              <i class="pi pi-chevron-right"></i>
+            </button>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Dialog đổi tên -->
   <p-dialog
@@ -232,7 +404,6 @@
       <button pButton type="button" label="Lưu" (click)="renameFile()"></button>
     </ng-template>
   </p-dialog>
-
 
   <!-- Dialog xem chi tiết file -->
   <p-dialog
